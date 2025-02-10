@@ -18,7 +18,7 @@ function App() {
     };
 
     return (
-        <div>
+        <div style={{ textAlign: "center", marginTop: "50px" }}>
             <h1>Travel Advice App</h1>
             <input
                 type="text"
