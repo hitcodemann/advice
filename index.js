@@ -6,7 +6,7 @@ function getAdvice() {
     }
 
     // Call AWS API Gateway endpoint (Replace with your real API URL)
-    fetch("https://your-api-gateway-url.com/travel-advice?country=" + country)
+    fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice" + country)
         .then(response => response.json())
         .then(data => {
             document.getElementById("advice").innerText = data.advice;
