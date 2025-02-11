@@ -3,17 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Travel Advice App</title>
+    <title>GitHub Analysis App</title>
 </head>
 <body>
-    <h1>Get Travel Advice</h1>
+    <h1>GitHub Analysis Tool</h1>
+
+    <label for="githubUrl">GitHub Repository URL:</label>
+    <input type="text" id="githubUrl" placeholder="Enter GitHub Repo URL">
     
-    <label for="country">Enter a Country Name:</label>
-    <input type="text" id="country" placeholder="e.g., Japan">
-    <button onclick="getAdvice()">Get Advice</button>
+    <label for="analysisQuery">What do you want to check?</label>
+    <input type="text" id="analysisQuery" placeholder="Enter your analysis request">
+    
+    <button onclick="analyzeRepo()">Analyze</button>
 
-    <p id="advice"></p>
+    <h2>Analysis Result:</h2>
+    <p id="analysisResult"></p>
 
-    <script src="index.js"></script> <!-- Link to JavaScript file -->
+    <script src="index.js"></script>
 </body>
 </html>
