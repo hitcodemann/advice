@@ -3,21 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub Analysis App</title>
+    <title>GitHub Analysis & Travel Advice</title>
 </head>
 <body>
-    <h1>GitHub Analysis Tool</h1>
 
+    <h2>GitHub Repository Analysis</h2>
     <label for="githubUrl">GitHub Repository URL:</label>
-    <input type="text" id="githubUrl" placeholder="Enter GitHub Repo URL">
-    
-    <label for="analysisQuery">What do you want to check?</label>
-    <input type="text" id="analysisQuery" placeholder="Enter your analysis request">
-    
+    <input type="text" id="githubUrl" placeholder="Enter GitHub URL">
+
+    <label for="language">Select Repository Language:</label>
+    <select id="language">
+        <option value="JavaScript">JavaScript</option>
+        <option value=".NET">.NET</option>
+        <option value="Java">Java</option>
+        <option value="C++">C++</option>
+    </select>
+
+    <label for="analysisQuery">Enter Analysis Query:</label>
+    <input type="text" id="analysisQuery" placeholder="E.g., Analyze for AWS Lambda compatibility">
+
     <button onclick="analyzeRepo()">Analyze</button>
 
-    <h2>Analysis Result:</h2>
+    <h3>Analysis Result:</h3>
     <p id="analysisResult"></p>
+
+    <h2>Travel Advice</h2>
+    <label for="country">Enter Country Name:</label>
+    <input type="text" id="country" placeholder="Enter country">
+
+    <button onclick="getAdvice()">Get Advice</button>
+
+    <h3>Travel Advice:</h3>
+    <p id="advice"></p>
 
     <script src="index.js"></script>
 </body>
