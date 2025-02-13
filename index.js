@@ -7,7 +7,7 @@ function analyzeRepo() {
         return;
     }
 
-    fetch("https://YOUR_API_GATEWAY_URL/dev/travel-advice", { // Use the same API Gateway URL
+    fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", { // Use the same API Gateway URL
         method: "POST",
         headers: {
             "Content-Type": "application/json"
