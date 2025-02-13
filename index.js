@@ -1,20 +1,22 @@
 function analyzeRepo() {
     let githubUrl = document.getElementById("githubUrl").value;
     let analysisQuery = document.getElementById("analysisQuery").value;
+    let language = document.getElementById("language").value; // Get selected language
 
     if (!githubUrl || !analysisQuery) {
         alert("Please enter both GitHub URL and an analysis request!");
         return;
     }
 
-    fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", { // Use the same API Gateway URL
+    fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", { 
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({ 
-            type: "github", // This tells Lambda to process a GitHub request
+            type: "github",
             githubUrl: githubUrl, 
+            language: language, // Send selected language
             analysisQuery: analysisQuery 
         }) 
     })
@@ -40,13 +42,13 @@ function getAdvice() {
         return;
     }
 
-    fetch("https://YOUR_API_GATEWAY_URL/dev/travel-advice", { // Use the same API Gateway URL
+    fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", { 
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({ 
-            type: "travel", // This tells Lambda to process a travel request
+            type: "travel",
             country: country 
         })
     })
