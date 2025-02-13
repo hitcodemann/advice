@@ -8,7 +8,7 @@ function analyzeRepo() {
         return;
     }
 
-    fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/github-analysis", { 
+    fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", { 
         method: "POST",
         headers: {
             "Content-Type": "application/json"
