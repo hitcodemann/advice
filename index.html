@@ -1,33 +1,80 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub Repository Analysis</title>
-</head>
-<body>
+import json
+import boto3
+from botocore.exceptions import ClientError
 
-    <h2>GitHub Repository Analysis</h2>
-    
-    <label for="githubUrl">GitHub Repository URL:</label>
-    <input type="text" id="githubUrl" placeholder="Enter GitHub URL">
+bedrock = boto3.client("bedrock-runtime", region_name="us-west-2")
 
-    <label for="language">Select Repository Language:</label>
-    <select id="language">
-        <option value="JavaScript">JavaScript</option>
-        <option value=".NET">.NET</option>
-        <option value="Java">Java</option>
-        <option value="C++">C++</option>
-    </select>
+def lambda_handler(event, context):
+    print("Received event:", json.dumps(event))  # Log event data
 
-    <label for="analysisQuery">Enter Analysis Query:</label>
-    <input type="text" id="analysisQuery" placeholder="E.g., Analyze for AWS Lambda compatibility">
+    try:
+        body = json.loads(event.get('body', '{}'))  
+        request_type = body.get("type")  
 
-    <button onclick="analyzeRepo()">Analyze</button>
+        if request_type == "github":
+            github_url = body.get("githubUrl")
+            language = body.get("language")  
+            analysis_query = body.get("analysisQuery")
 
-    <h3>Analysis Result:</h3>
-    <p id="analysisResult"></p>
+            if not github_url or not analysis_query or not language:
+                raise ValueError("Missing 'githubUrl', 'language', or 'analysisQuery' in request body")
 
-    <script src="index.js"></script>
-</body>
-</html>
+            print(f"GitHub Analysis request for: {github_url} in {language}")
+
+            prompt = f"Analyze the GitHub repository {github_url}. The project is written in {language}. {analysis_query}"
+
+        elif request_type == "investment":
+            name = body.get("name")
+            salary = body.get("salary")
+            investment_type = body.get("investmentType")
+
+            if not name or not salary or not investment_type:
+                raise ValueError("Missing 'name', 'salary', or 'investmentType' in request body")
+
+            print(f"Investment advice request for {name} with salary {salary}")
+
+            prompt = f"Based on a salary of {salary}, provide investment advice for {name} regarding {investment_type}. Consider financial stability and future growth."
+
+        else:
+            raise ValueError("Invalid request type. Must be 'github' or 'investment'.")
+
+        native_request = {
+            "inputText": prompt,
+            "textGenerationConfig": {
+                "maxTokenCount": 512,
+                "temperature": 0.7
+            },
+        }
+
+        request = json.dumps(native_request)
+
+        response = bedrock.invoke_model(
+            modelId="amazon.titan-text-express-v1", 
+            body=request
+        )
+
+        model_response = json.loads(response["body"].read())
+        response_text = model_response["results"][0]["outputText"]
+        print("Response from model:", response_text)
+
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type'
+            },
+            'body': json.dumps({'analysis' if request_type == 'github' else 'investmentAdvice': response_text})
+        }
+
+    except (ClientError, Exception) as e:
+        print(f"ERROR: Can't invoke model. Reason: {e}")
+        return {
+            'statusCode': 500,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps({'error': str(e)})
+        }
