@@ -1,66 +1,71 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Analysis Portal</title>
-    <script src="index.js" defer></script>
-</head>
-<body>
+function analyzeRepo() {
+    let githubUrl = document.getElementById("githubUrl").value;
+    let analysisQuery = document.getElementById("analysisQuery").value;
+    let language = document.getElementById("language").value;
 
-    <!-- Home Page -->
-    <div id="homePage">
-        <h2>Welcome to AI Analysis Portal</h2>
-        <button onclick="showPage('githubAnalysisPage')">GitHub Repository Analysis</button>
-        <button onclick="showPage('investmentPage')">Investment Advice</button>
-    </div>
+    if (!githubUrl || !analysisQuery) {
+        alert("Please enter both GitHub URL and an analysis request!");
+        return;
+    }
 
-    <!-- GitHub Analysis Page -->
-    <div id="githubAnalysisPage" style="display: none;">
-        <h2>GitHub Repository Analysis</h2>
-        <label for="githubUrl">GitHub Repository URL:</label>
-        <input type="text" id="githubUrl" placeholder="Enter GitHub URL">
+    fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", { 
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ 
+            type: "github",
+            githubUrl: githubUrl, 
+            language: language,
+            analysisQuery: analysisQuery 
+        }) 
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("analysisResult").innerText = data.analysis;
+    })
+    .catch(error => {
+        console.error("Error fetching analysis:", error);
+        document.getElementById("analysisResult").innerText = "Error fetching analysis. Try again.";
+    });
+}
 
-        <label for="language">Select Repository Language:</label>
-        <select id="language">
-            <option value="JavaScript">JavaScript</option>
-            <option value=".NET">.NET</option>
-            <option value="Java">Java</option>
-            <option value="C++">C++</option>
-        </select>
+function getInvestmentAdvice() {
+    let name = document.getElementById("name").value;
+    let salary = document.getElementById("salary").value;
+    let investmentType = document.getElementById("investmentType").value;
 
-        <label for="analysisQuery">Enter Analysis Query:</label>
-        <input type="text" id="analysisQuery" placeholder="E.g., Analyze for AWS Lambda compatibility">
+    if (!name || !salary || !investmentType) {
+        alert("Please fill out all fields!");
+        return;
+    }
 
-        <button onclick="analyzeRepo()">Analyze</button>
+    fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", { 
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ 
+            type: "investment",
+            name: name,
+            salary: salary,
+            investmentType: investmentType 
+        }) 
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("investmentResult").innerText = data.investmentAdvice;
+    })
+    .catch(error => {
+        console.error("Error fetching investment advice:", error);
+        document.getElementById("investmentResult").innerText = "Error fetching investment advice. Try again.";
+    });
+}
 
-        <h3>Analysis Result:</h3>
-        <p id="analysisResult"></p>
-        <button onclick="showPage('homePage')">Back</button>
-    </div>
+function showPage(pageId) {
+    document.getElementById("homePage").style.display = "none";
+    document.getElementById("githubAnalysisPage").style.display = "none";
+    document.getElementById("investmentPage").style.display = "none";
 
-    <!-- Investment Advice Page -->
-    <div id="investmentPage" style="display: none;">
-        <h2>Investment Advice</h2>
-        <label for="name">Name:</label>
-        <input type="text" id="name" placeholder="Enter your name">
-
-        <label for="salary">Salary:</label>
-        <input type="number" id="salary" placeholder="Enter your salary">
-
-        <label for="investmentType">Where do you want to invest?</label>
-        <select id="investmentType">
-            <option value="Mutual Fund">Mutual Fund</option>
-            <option value="SIP">SIP</option>
-            <option value="Property">Property</option>
-        </select>
-
-        <button onclick="getInvestmentAdvice()">Get Advice</button>
-
-        <h3>Investment Advice Result:</h3>
-        <p id="investmentResult"></p>
-        <button onclick="showPage('homePage')">Back</button>
-    </div>
-
-</body>
-</html>
+    document.getElementById(pageId).style.display = "block";
+}
