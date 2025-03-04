@@ -3,20 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Analysis Portal</title>
+    <title>Travelers AI Portal</title>
+    <link rel="stylesheet" href="styles.css">  <!-- Add this for styling -->
     <script src="index.js" defer></script>
 </head>
 <body>
 
+    <!-- Travelers Header -->
+    <header>
+        <h1>Travelers AI Analysis Portal</h1>
+    </header>
+
     <!-- Home Page -->
-    <div id="homePage">
+    <div class="container" id="homePage">
         <h2>Welcome to AI Analysis Portal</h2>
-        <button onclick="showPage('githubAnalysisPage')">GitHub Repository Analysis</button>
-        <button onclick="showPage('investmentPage')">Investment Advice</button>
+        <button class="primary-btn" onclick="showPage('githubAnalysisPage')">GitHub Repository Analysis</button>
+        <button class="primary-btn" onclick="showPage('investmentPage')">Investment Advice</button>
     </div>
 
     <!-- GitHub Analysis Page -->
-    <div id="githubAnalysisPage" style="display: none;">
+    <div class="container hidden" id="githubAnalysisPage">
         <h2>GitHub Repository Analysis</h2>
         <label for="githubUrl">GitHub Repository URL:</label>
         <input type="text" id="githubUrl" placeholder="Enter GitHub URL">
@@ -32,15 +38,15 @@
         <label for="analysisQuery">Enter Analysis Query:</label>
         <input type="text" id="analysisQuery" placeholder="E.g., Analyze for AWS Lambda compatibility">
 
-        <button onclick="analyzeRepo()">Analyze</button>
+        <button class="primary-btn" onclick="analyzeRepo()">Analyze</button>
 
         <h3>Analysis Result:</h3>
         <p id="analysisResult"></p>
-        <button onclick="showPage('homePage')">Back</button>
+        <button class="secondary-btn" onclick="showPage('homePage')">Back</button>
     </div>
 
     <!-- Investment Advice Page -->
-    <div id="investmentPage" style="display: none;">
+    <div class="container hidden" id="investmentPage">
         <h2>Investment Advice</h2>
         <label for="name">Name:</label>
         <input type="text" id="name" placeholder="Enter your name">
@@ -55,13 +61,12 @@
             <option value="Property">Property</option>
         </select>
 
-        <button onclick="getInvestmentAdvice()">Get Advice</button>
+        <button class="primary-btn" onclick="getInvestmentAdvice()">Get Advice</button>
 
         <h3>Investment Advice Result:</h3>
         <p id="investmentResult"></p>
-        <button onclick="showPage('homePage')">Back</button>
+        <button class="secondary-btn" onclick="showPage('homePage')">Back</button>
     </div>
 
 </body>
 </html>
-
