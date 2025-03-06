@@ -3,38 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Travelers AI Portal</title>
-    <link rel="stylesheet" href="styles.css">  <!-- Add this for styling -->
-    <script src="index.js" defer></script>
+    <title>Multi-Function App</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-    <!-- Travelers Header -->
     <header>
-        <h1>Travelers AI Analysis Portal</h1>
-        <img src="umbrella.png" alt="Travelers Logo" class="logo">
+        Multi-Function App
+        <img src="umbrella.png" alt="Logo" class="logo"> <!-- Add your logo here -->
     </header>
 
-    <!-- Home Page -->
-    <div class="container" id="homePage">
-        <h2>Welcome to AI Analysis Portal</h2>
-        <button class="primary-btn" onclick="showPage('githubAnalysisPage')">GitHub Repository Analysis</button>
-        <button class="primary-btn" onclick="showPage('investmentPage')">Investment Advice</button>
-    </div>
+    <nav>
+        <button class="primary-btn" onclick="showPage('githubAnalysisPage')">GitHub Analysis</button>
+        <button class="primary-btn" onclick="showPage('investmentAdvicePage')">Investment Advice</button>
+        <button class="primary-btn" onclick="showPage('imageAnalysisPage')">Image Analysis</button>
+    </nav>
 
-    <!-- GitHub Analysis Page -->
-    <div class="container hidden" id="githubAnalysisPage">
+    <!-- GitHub Analysis Section -->
+    <div id="githubAnalysisPage" class="container">
         <h2>GitHub Repository Analysis</h2>
         <label for="githubUrl">GitHub Repository URL:</label>
         <input type="text" id="githubUrl" placeholder="Enter GitHub URL">
-
-        <label for="language">Select Repository Language:</label>
-        <select id="language">
-            <option value="JavaScript">JavaScript</option>
-            <option value=".NET">.NET</option>
-            <option value="Java">Java</option>
-            <option value="C++">C++</option>
-        </select>
 
         <label for="analysisQuery">Enter Analysis Query:</label>
         <input type="text" id="analysisQuery" placeholder="E.g., Analyze for AWS Lambda compatibility">
@@ -43,11 +31,10 @@
 
         <h3>Analysis Result:</h3>
         <p id="analysisResult"></p>
-        <button class="secondary-btn" onclick="showPage('homePage')">Back</button>
     </div>
 
-    <!-- Investment Advice Page -->
-    <div class="container hidden" id="investmentPage">
+    <!-- Investment Advice Section -->
+    <div id="investmentAdvicePage" class="container hidden">
         <h2>Investment Advice</h2>
         <label for="name">Name:</label>
         <input type="text" id="name" placeholder="Enter your name">
@@ -55,19 +42,29 @@
         <label for="salary">Salary:</label>
         <input type="number" id="salary" placeholder="Enter your salary">
 
-        <label for="investmentType">Where do you want to invest?</label>
+        <label for="investmentType">Investment Type:</label>
         <select id="investmentType">
-            <option value="Mutual Fund">Mutual Fund</option>
-            <option value="SIP">SIP</option>
-            <option value="Property">Property</option>
+            <option value="mutual_fund">Mutual Fund</option>
+            <option value="sip">SIP</option>
+            <option value="property">Property</option>
         </select>
 
         <button class="primary-btn" onclick="getInvestmentAdvice()">Get Advice</button>
 
-        <h3>Investment Advice Result:</h3>
+        <h3>Investment Advice:</h3>
         <p id="investmentResult"></p>
-        <button class="secondary-btn" onclick="showPage('homePage')">Back</button>
     </div>
 
+    <!-- Image Analysis Section -->
+    <div id="imageAnalysisPage" class="container hidden">
+        <h2>Image Upload & Analysis</h2>
+        <input type="file" id="imageUpload">
+        <button class="primary-btn" onclick="analyzeImage()">Analyze Image</button>
+
+        <h3>Image Description:</h3>
+        <p id="imageAnalysisResult"></p>
+    </div>
+
+    <script src="index.js" defer></script>
 </body>
 </html>
