@@ -3,65 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Investment & Image Analysis App</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
-        .container { display: none; }
-        .primary-btn, .secondary-btn {
-            margin: 10px; padding: 10px 20px; font-size: 16px;
-            border: none; cursor: pointer; border-radius: 5px;
-        }
-        .primary-btn { background-color: #007bff; color: white; }
-        .secondary-btn { background-color: #6c757d; color: white; }
-    </style>
+    <title>Travelers AI Portal</title>
+    <link rel="stylesheet" href="styles.css">  <!-- Add this for styling -->
+    <script src="index.js" defer></script>
 </head>
 <body>
 
-    <div class="container" id="homePage" style="display:block;">
-        <h1>Welcome to Our App</h1>
+    <!-- Travelers Header -->
+    <header>
+        <h1>Travelers AI Analysis Portal</h1>
+    </header>
+
+    <!-- Home Page -->
+    <div class="container" id="homePage">
+        <h2>Welcome to AI Analysis Portal</h2>
         <button class="primary-btn" onclick="showPage('githubAnalysisPage')">GitHub Repository Analysis</button>
-        <button class="primary-btn" onclick="showPage('investmentPage')">Investment Advice Form</button>
-        <button class="primary-btn" onclick="showPage('imageAnalysisPage')">Image Analysis</button>
+        <button class="primary-btn" onclick="showPage('investmentPage')">Investment Advice</button>
     </div>
 
     <!-- GitHub Analysis Page -->
-    <div class="container" id="githubAnalysisPage">
+    <div class="container hidden" id="githubAnalysisPage">
         <h2>GitHub Repository Analysis</h2>
+        <label for="githubUrl">GitHub Repository URL:</label>
         <input type="text" id="githubUrl" placeholder="Enter GitHub URL">
-        <input type="text" id="query" placeholder="Enter your query">
-        <button class="primary-btn" onclick="analyzeGitHubRepo()">Analyze</button>
-        <h3>Result:</h3>
-        <p id="githubAnalysisResult"></p>
+
+        <label for="language">Select Repository Language:</label>
+        <select id="language">
+            <option value="JavaScript">JavaScript</option>
+            <option value=".NET">.NET</option>
+            <option value="Java">Java</option>
+            <option value="C++">C++</option>
+        </select>
+
+        <label for="analysisQuery">Enter Analysis Query:</label>
+        <input type="text" id="analysisQuery" placeholder="E.g., Analyze for AWS Lambda compatibility">
+
+        <button class="primary-btn" onclick="analyzeRepo()">Analyze</button>
+
+        <h3>Analysis Result:</h3>
+        <p id="analysisResult"></p>
         <button class="secondary-btn" onclick="showPage('homePage')">Back</button>
     </div>
 
     <!-- Investment Advice Page -->
-    <div class="container" id="investmentPage">
+    <div class="container hidden" id="investmentPage">
         <h2>Investment Advice</h2>
-        <input type="text" id="name" placeholder="Enter Name">
-        <input type="number" id="salary" placeholder="Enter Salary">
+        <label for="name">Name:</label>
+        <input type="text" id="name" placeholder="Enter your name">
+
+        <label for="salary">Salary:</label>
+        <input type="number" id="salary" placeholder="Enter your salary">
+
+        <label for="investmentType">Where do you want to invest?</label>
         <select id="investmentType">
             <option value="Mutual Fund">Mutual Fund</option>
             <option value="SIP">SIP</option>
             <option value="Property">Property</option>
         </select>
+
         <button class="primary-btn" onclick="getInvestmentAdvice()">Get Advice</button>
-        <h3>Advice:</h3>
+
+        <h3>Investment Advice Result:</h3>
         <p id="investmentResult"></p>
         <button class="secondary-btn" onclick="showPage('homePage')">Back</button>
     </div>
-
-    <!-- Image Analysis Page -->
-    <div class="container" id="imageAnalysisPage">
-        <h2>Image Analysis</h2>
-        <input type="file" id="imageInput" accept="image/*">
-        <button class="primary-btn" onclick="analyzeImage()">Analyze Image</button>
-        <h3>Analysis Result:</h3>
-        <p id="imageAnalysisResult"></p>
-        <button class="secondary-btn" onclick="showPage('homePage')">Back</button>
-    </div>
-
-    <script src="index.js"></script>
 
 </body>
 </html>
