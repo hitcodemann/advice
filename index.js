@@ -5,8 +5,8 @@ function analyzeRepo() {
     let analysisQuery = document.getElementById("analysisQuery").value;
     let language = document.getElementById("language").value;
 
-    if (!githubUrl || !analysisQuery) {
-        alert("Please enter both GitHub URL and an analysis request!");
+    if (!githubUrl || !analysisQuery || !language) {
+        alert("Please enter GitHub URL, Language, and an Analysis Query!");
         return;
     }
 
@@ -61,18 +61,30 @@ function analyzeImage() {
         return;
     }
 
-    let formData = new FormData();
-    formData.append("image", imageFile);
+    let reader = new FileReader();
+    reader.readAsDataURL(imageFile);
+    reader.onload = function () {
+        let base64Image = reader.result.split(',')[1]; // Extract Base64 part
 
-    fetch(API_URL, {
-        method: "POST",
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById("imageResult").innerText = data.imageDescription;
-    })
-    .catch(error => console.error("Error:", error));
+        fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                type: "imageUpload",
+                filename: imageFile.name,
+                image: base64Image
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("imageResult").innerText = data.imageDescription;
+        })
+        .catch(error => console.error("Error:", error));
+    };
+
+    reader.onerror = function (error) {
+        console.error("Error converting image to Base64:", error);
+    };
 }
 
 function showPage(pageId) {
