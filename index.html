@@ -3,93 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multi-Input App</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Investment & Image Analysis App</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+        .container { display: none; }
+        .primary-btn, .secondary-btn {
+            margin: 10px; padding: 10px 20px; font-size: 16px;
+            border: none; cursor: pointer; border-radius: 5px;
+        }
+        .primary-btn { background-color: #007bff; color: white; }
+        .secondary-btn { background-color: #6c757d; color: white; }
+    </style>
 </head>
 <body>
-    <h1>Multi-Input App</h1>
-    
-    <!-- Image Upload Section -->
-    <h2>Upload an Image</h2>
-    <input type="file" id="imageInput" accept="image/*">
-    <button onclick="uploadImage()">Upload</button>
-    <p id="imageResult"></p>
 
-    <!-- GitHub Analysis Section -->
-    <h2>Analyze GitHub Repository</h2>
-    <input type="text" id="githubUrl" placeholder="Enter GitHub URL">
-    <input type="text" id="analysisQuery" placeholder="Enter analysis query">
-    <select id="language">
-        <option value="Python">Python</option>
-        <option value="JavaScript">JavaScript</option>
-        <option value="Java">Java</option>
-    </select>
-    <button onclick="analyzeGitHub()">Analyze</button>
-    <p id="githubResult"></p>
+    <div class="container" id="homePage" style="display:block;">
+        <h1>Welcome to Our App</h1>
+        <button class="primary-btn" onclick="showPage('githubAnalysisPage')">GitHub Repository Analysis</button>
+        <button class="primary-btn" onclick="showPage('investmentPage')">Investment Advice Form</button>
+        <button class="primary-btn" onclick="showPage('imageAnalysisPage')">Image Analysis</button>
+    </div>
 
-    <!-- Investment Advice Section -->
-    <h2>Get Investment Advice</h2>
-    <input type="text" id="name" placeholder="Enter Name">
-    <input type="number" id="salary" placeholder="Enter Salary">
-    <select id="investmentType">
-        <option value="Mutual Fund">Mutual Fund</option>
-        <option value="SIP">SIP</option>
-        <option value="Property">Property</option>
-    </select>
-    <button onclick="getInvestmentAdvice()">Get Advice</button>
-    <p id="investmentResult"></p>
-    
-    <script>
-        const API_URL = "https://your-api-id.execute-api.us-west-2.amazonaws.com/prod";
+    <!-- GitHub Analysis Page -->
+    <div class="container" id="githubAnalysisPage">
+        <h2>GitHub Repository Analysis</h2>
+        <input type="text" id="githubUrl" placeholder="Enter GitHub URL">
+        <input type="text" id="query" placeholder="Enter your query">
+        <button class="primary-btn" onclick="analyzeGitHubRepo()">Analyze</button>
+        <h3>Result:</h3>
+        <p id="githubAnalysisResult"></p>
+        <button class="secondary-btn" onclick="showPage('homePage')">Back</button>
+    </div>
 
-        function uploadImage() {
-            const fileInput = document.getElementById("imageInput");
-            const file = fileInput.files[0];
-            if (!file) return alert("Please select an image.");
+    <!-- Investment Advice Page -->
+    <div class="container" id="investmentPage">
+        <h2>Investment Advice</h2>
+        <input type="text" id="name" placeholder="Enter Name">
+        <input type="number" id="salary" placeholder="Enter Salary">
+        <select id="investmentType">
+            <option value="Mutual Fund">Mutual Fund</option>
+            <option value="SIP">SIP</option>
+            <option value="Property">Property</option>
+        </select>
+        <button class="primary-btn" onclick="getInvestmentAdvice()">Get Advice</button>
+        <h3>Advice:</h3>
+        <p id="investmentResult"></p>
+        <button class="secondary-btn" onclick="showPage('homePage')">Back</button>
+    </div>
 
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = async function () {
-                const base64String = reader.result.split(",")[1];
-                const response = await fetch(API_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ type: "imageUpload", filename: file.name, image: base64String })
-                });
-                const data = await response.json();
-                document.getElementById("imageResult").innerText = data.description || "Error processing image.";
-            };
-        }
+    <!-- Image Analysis Page -->
+    <div class="container" id="imageAnalysisPage">
+        <h2>Image Analysis</h2>
+        <input type="file" id="imageInput" accept="image/*">
+        <button class="primary-btn" onclick="analyzeImage()">Analyze Image</button>
+        <h3>Analysis Result:</h3>
+        <p id="imageAnalysisResult"></p>
+        <button class="secondary-btn" onclick="showPage('homePage')">Back</button>
+    </div>
 
-        async function analyzeGitHub() {
-            const githubUrl = document.getElementById("githubUrl").value;
-            const analysisQuery = document.getElementById("analysisQuery").value;
-            const language = document.getElementById("language").value;
-            if (!githubUrl || !analysisQuery) return alert("Please enter all fields.");
+    <script src="index.js"></script>
 
-            const response = await fetch(API_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ type: "github", githubUrl, language, analysisQuery })
-            });
-            const data = await response.json();
-            document.getElementById("githubResult").innerText = data.analysis || "Error analyzing repository.";
-        }
-
-        async function getInvestmentAdvice() {
-            const name = document.getElementById("name").value;
-            const salary = document.getElementById("salary").value;
-            const investmentType = document.getElementById("investmentType").value;
-            if (!name || !salary || !investmentType) return alert("Please enter all fields.");
-
-            const response = await fetch(API_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ type: "investment", name, salary, investmentType })
-            });
-            const data = await response.json();
-            document.getElementById("investmentResult").innerText = data.investmentAdvice || "Error fetching advice.";
-        }
-    </script>
 </body>
 </html>
