@@ -12,7 +12,6 @@ header {
     color: white;
     padding: 15px;
     font-size: 24px;
-    position: relative;
 }
 
 /* Centered Content */
@@ -68,7 +67,6 @@ input, select {
 .secondary-btn:hover {
     background-color: darkgray;
 }
-
 /* Logo Styling */
 .logo {
     position: absolute;
