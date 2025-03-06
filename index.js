@@ -1,75 +1,81 @@
-function showPage(pageId) {
-    document.querySelectorAll('.container').forEach(div => div.style.display = 'none');
-    document.getElementById(pageId).style.display = 'block';
-}
+const API_URL = "https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice";
 
-// GitHub Repository Analysis Function
-function analyzeGitHubRepo() {
+function analyzeRepo() {
     let githubUrl = document.getElementById("githubUrl").value;
-    let query = document.getElementById("query").value;
+    let analysisQuery = document.getElementById("analysisQuery").value;
+    let language = document.getElementById("language").value;
 
-    fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", {
+    if (!githubUrl || !analysisQuery) {
+        alert("Please enter both GitHub URL and an analysis request!");
+        return;
+    }
+
+    fetch(API_URL, { 
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "github", url: githubUrl, query: query })
+        body: JSON.stringify({ 
+            type: "github",
+            githubUrl: githubUrl, 
+            language: language,
+            analysisQuery: analysisQuery 
+        }) 
     })
     .then(response => response.json())
     .then(data => {
-        document.getElementById("githubAnalysisResult").innerText = data.result || "No result found.";
+        document.getElementById("analysisResult").innerText = data.analysis;
     })
-    .catch(error => {
-        console.error("Error analyzing GitHub repository:", error);
-        document.getElementById("githubAnalysisResult").innerText = "Error analyzing repository.";
-    });
+    .catch(error => console.error("Error:", error));
 }
 
-// Investment Advice Function
 function getInvestmentAdvice() {
     let name = document.getElementById("name").value;
     let salary = document.getElementById("salary").value;
     let investmentType = document.getElementById("investmentType").value;
 
-    fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "investment", name: name, salary: salary, investmentType: investmentType })
-    })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById("investmentResult").innerText = data.advice || "No advice found.";
-    })
-    .catch(error => {
-        console.error("Error fetching investment advice:", error);
-        document.getElementById("investmentResult").innerText = "Error fetching investment advice.";
-    });
-}
-
-// Image Analysis Function
-function analyzeImage() {
-    let imageInput = document.getElementById("imageInput").files[0];
-
-    if (!imageInput) {
-        alert("Please select an image to analyze!");
+    if (!name || !salary || !investmentType) {
+        alert("Please fill out all fields!");
         return;
     }
 
-    let reader = new FileReader();
-    reader.readAsDataURL(imageInput);
-    reader.onloadend = function () {
-        let base64Image = reader.result.split(",")[1];
+    fetch(API_URL, { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+            type: "investment",
+            name: name,
+            salary: salary,
+            investmentType: investmentType 
+        }) 
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("investmentResult").innerText = data.investmentAdvice;
+    })
+    .catch(error => console.error("Error:", error));
+}
 
-        fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ type: "image", imageData: base64Image })
-        })
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById("imageAnalysisResult").innerText = data.description || "No description found.";
-        })
-        .catch(error => {
-            console.error("Error analyzing image:", error);
-            document.getElementById("imageAnalysisResult").innerText = "Error analyzing image.";
-        });
-    };
+function analyzeImage() {
+    let imageFile = document.getElementById("imageUpload").files[0];
+    if (!imageFile) {
+        alert("Please upload an image!");
+        return;
+    }
+
+    let formData = new FormData();
+    formData.append("image", imageFile);
+
+    fetch(API_URL, {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("imageResult").innerText = data.imageDescription;
+    })
+    .catch(error => console.error("Error:", error));
+}
+
+function showPage(pageId) {
+    document.querySelectorAll(".container").forEach(container => container.style.display = "none");
+    document.getElementById(pageId).style.display = "block";
 }
