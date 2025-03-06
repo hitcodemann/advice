@@ -4,7 +4,7 @@ function showPage(pageId) {
 }
 
 // GitHub Repository Analysis Function
-function analyzeGitHubRepo() {
+function analyzeRepo() {
     let githubUrl = document.getElementById("githubUrl").value;
     let query = document.getElementById("query").value;
 
