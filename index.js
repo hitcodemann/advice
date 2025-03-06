@@ -70,21 +70,36 @@ function analyzeImage() {
         return;
     }
 
-    let formData = new FormData();
-    formData.append("file", imageUpload);
+    let reader = new FileReader();
+    reader.readAsDataURL(imageUpload);
+    
+    reader.onload = function () {
+        let base64String = reader.result.split(",")[1]; // Remove "data:image/png;base64," part
+        let filename = imageUpload.name;
 
-    fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", { 
-        method: "POST",
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById("imageAnalysisResult").innerText = data.imageDescription;
-    })
-    .catch(error => {
-        console.error("Error fetching image analysis:", error);
-        document.getElementById("imageAnalysisResult").innerText = "Error fetching image analysis. Try again.";
-    });
+        fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", { 
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+                type: "imageUpload",
+                filename: filename,
+                image: base64String
+            }) 
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("imageAnalysisResult").innerText = data.imageLabels ? data.imageLabels.join(", ") : "No labels detected.";
+        })
+        .catch(error => {
+            console.error("Error fetching image analysis:", error);
+            document.getElementById("imageAnalysisResult").innerText = "Error fetching image analysis. Try again.";
+        });
+    };
+
+    reader.onerror = function (error) {
+        console.error("Error converting image:", error);
+        alert("Failed to process image. Try again.");
+    };
 }
 
 function showPage(pageId) {
