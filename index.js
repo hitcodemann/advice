@@ -62,10 +62,36 @@ function getInvestmentAdvice() {
     });
 }
 
+function analyzeImage() {
+    let imageUpload = document.getElementById("imageUpload").files[0];
+
+    if (!imageUpload) {
+        alert("Please upload an image!");
+        return;
+    }
+
+    let formData = new FormData();
+    formData.append("file", imageUpload);
+
+    fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", { 
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("imageAnalysisResult").innerText = data.imageDescription;
+    })
+    .catch(error => {
+        console.error("Error fetching image analysis:", error);
+        document.getElementById("imageAnalysisResult").innerText = "Error fetching image analysis. Try again.";
+    });
+}
+
 function showPage(pageId) {
     document.getElementById("homePage").style.display = "none";
     document.getElementById("githubAnalysisPage").style.display = "none";
     document.getElementById("investmentPage").style.display = "none";
+    document.getElementById("imageAnalysisPage").style.display = "none";
 
     document.getElementById(pageId).style.display = "block";
 }
