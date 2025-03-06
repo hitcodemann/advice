@@ -1,93 +1,75 @@
-const API_URL = "https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice";
+function showPage(pageId) {
+    document.querySelectorAll('.container').forEach(div => div.style.display = 'none');
+    document.getElementById(pageId).style.display = 'block';
+}
 
-function analyzeRepo() {
+// GitHub Repository Analysis Function
+function analyzeGitHubRepo() {
     let githubUrl = document.getElementById("githubUrl").value;
-    let analysisQuery = document.getElementById("analysisQuery").value;
-    let language = document.getElementById("language").value;
+    let query = document.getElementById("query").value;
 
-    if (!githubUrl || !analysisQuery || !language) {
-        alert("Please enter GitHub URL, Language, and an Analysis Query!");
-        return;
-    }
-
-    fetch(API_URL, { 
+    fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-            type: "github",
-            githubUrl: githubUrl, 
-            language: language,
-            analysisQuery: analysisQuery 
-        }) 
+        body: JSON.stringify({ type: "github", url: githubUrl, query: query })
     })
     .then(response => response.json())
     .then(data => {
-        document.getElementById("analysisResult").innerText = data.analysis;
+        document.getElementById("githubAnalysisResult").innerText = data.result || "No result found.";
     })
-    .catch(error => console.error("Error:", error));
+    .catch(error => {
+        console.error("Error analyzing GitHub repository:", error);
+        document.getElementById("githubAnalysisResult").innerText = "Error analyzing repository.";
+    });
 }
 
+// Investment Advice Function
 function getInvestmentAdvice() {
     let name = document.getElementById("name").value;
     let salary = document.getElementById("salary").value;
     let investmentType = document.getElementById("investmentType").value;
 
-    if (!name || !salary || !investmentType) {
-        alert("Please fill out all fields!");
-        return;
-    }
-
-    fetch(API_URL, { 
+    fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-            type: "investment",
-            name: name,
-            salary: salary,
-            investmentType: investmentType 
-        }) 
+        body: JSON.stringify({ type: "investment", name: name, salary: salary, investmentType: investmentType })
     })
     .then(response => response.json())
     .then(data => {
-        document.getElementById("investmentResult").innerText = data.investmentAdvice;
+        document.getElementById("investmentResult").innerText = data.advice || "No advice found.";
     })
-    .catch(error => console.error("Error:", error));
+    .catch(error => {
+        console.error("Error fetching investment advice:", error);
+        document.getElementById("investmentResult").innerText = "Error fetching investment advice.";
+    });
 }
 
+// Image Analysis Function
 function analyzeImage() {
-    let imageFile = document.getElementById("imageUpload").files[0];
-    if (!imageFile) {
-        alert("Please upload an image!");
+    let imageInput = document.getElementById("imageInput").files[0];
+
+    if (!imageInput) {
+        alert("Please select an image to analyze!");
         return;
     }
 
     let reader = new FileReader();
-    reader.readAsDataURL(imageFile);
-    reader.onload = function () {
-        let base64Image = reader.result.split(',')[1]; // Extract Base64 part
+    reader.readAsDataURL(imageInput);
+    reader.onloadend = function () {
+        let base64Image = reader.result.split(",")[1];
 
-        fetch(API_URL, {
+        fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                type: "imageUpload",
-                filename: imageFile.name,
-                image: base64Image
-            })
+            body: JSON.stringify({ type: "image", imageData: base64Image })
         })
         .then(response => response.json())
         .then(data => {
-            document.getElementById("imageResult").innerText = data.imageDescription;
+            document.getElementById("imageAnalysisResult").innerText = data.description || "No description found.";
         })
-        .catch(error => console.error("Error:", error));
+        .catch(error => {
+            console.error("Error analyzing image:", error);
+            document.getElementById("imageAnalysisResult").innerText = "Error analyzing image.";
+        });
     };
-
-    reader.onerror = function (error) {
-        console.error("Error converting image to Base64:", error);
-    };
-}
-
-function showPage(pageId) {
-    document.querySelectorAll(".container").forEach(container => container.style.display = "none");
-    document.getElementById(pageId).style.display = "block";
 }
