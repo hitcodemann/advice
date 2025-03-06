@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Travelers AI Portal</title>
-    <link rel="stylesheet" href="styles.css">  <!-- Add this for styling -->
+    <link rel="stylesheet" href="styles.css">
     <script src="index.js" defer></script>
 </head>
 <body>
@@ -20,6 +20,7 @@
         <h2>Welcome to AI Analysis Portal</h2>
         <button class="primary-btn" onclick="showPage('githubAnalysisPage')">GitHub Repository Analysis</button>
         <button class="primary-btn" onclick="showPage('investmentPage')">Investment Advice</button>
+        <button class="primary-btn" onclick="showPage('imageAnalysisPage')">Image Upload & Analysis</button>
     </div>
 
     <!-- GitHub Analysis Page -->
@@ -66,6 +67,17 @@
 
         <h3>Investment Advice Result:</h3>
         <p id="investmentResult"></p>
+        <button class="secondary-btn" onclick="showPage('homePage')">Back</button>
+    </div>
+
+    <!-- Image Analysis Page -->
+    <div class="container hidden" id="imageAnalysisPage">
+        <h2>Image Upload & Analysis</h2>
+        <input type="file" id="imageUpload">
+        <button class="primary-btn" onclick="analyzeImage()">Analyze Image</button>
+
+        <h3>Image Analysis Result:</h3>
+        <p id="imageAnalysisResult"></p>
         <button class="secondary-btn" onclick="showPage('homePage')">Back</button>
     </div>
 
