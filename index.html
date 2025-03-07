@@ -8,14 +8,11 @@
     <script src="index.js" defer></script>
 </head>
 <body>
-
-    <!-- Travelers Header -->
     <header>
         <h1>Travelers AI Analysis Portal</h1>
         <img src="umbrella.png" alt="Travelers Logo" class="logo">
     </header>
 
-    <!-- Home Page -->
     <div class="container" id="homePage">
         <h2>Welcome to AI Analysis Portal</h2>
         <button class="primary-btn" onclick="showPage('githubAnalysisPage')">GitHub Repository Analysis</button>
@@ -23,12 +20,10 @@
         <button class="primary-btn" onclick="showPage('imageAnalysisPage')">Image Upload & Analysis</button>
     </div>
 
-    <!-- GitHub Analysis Page -->
-    <div class="container hidden" id="githubAnalysisPage">
+    <div class="container" id="githubAnalysisPage" style="display: none;">
         <h2>GitHub Repository Analysis</h2>
         <label for="githubUrl">GitHub Repository URL:</label>
         <input type="text" id="githubUrl" placeholder="Enter GitHub URL">
-
         <label for="language">Select Repository Language:</label>
         <select id="language">
             <option value="JavaScript">JavaScript</option>
@@ -36,50 +31,39 @@
             <option value="Java">Java</option>
             <option value="C++">C++</option>
         </select>
-
         <label for="analysisQuery">Enter Analysis Query:</label>
         <input type="text" id="analysisQuery" placeholder="E.g., Analyze for AWS Lambda compatibility">
-
         <button class="primary-btn" onclick="analyzeRepo()">Analyze</button>
-
         <h3>Analysis Result:</h3>
         <p id="analysisResult"></p>
         <button class="secondary-btn" onclick="showPage('homePage')">Back</button>
     </div>
 
-    <!-- Investment Advice Page -->
-    <div class="container hidden" id="investmentPage">
+    <div class="container" id="investmentPage" style="display: none;">
         <h2>Investment Advice</h2>
         <label for="name">Name:</label>
         <input type="text" id="name" placeholder="Enter your name">
-
         <label for="salary">Salary:</label>
         <input type="number" id="salary" placeholder="Enter your salary">
-
         <label for="investmentType">Where do you want to invest?</label>
         <select id="investmentType">
             <option value="Mutual Fund">Mutual Fund</option>
             <option value="SIP">SIP</option>
             <option value="Property">Property</option>
         </select>
-
         <button class="primary-btn" onclick="getInvestmentAdvice()">Get Advice</button>
-
         <h3>Investment Advice Result:</h3>
         <p id="investmentResult"></p>
         <button class="secondary-btn" onclick="showPage('homePage')">Back</button>
     </div>
 
-    <!-- Image Analysis Page -->
-    <div class="container hidden" id="imageAnalysisPage">
+    <div class="container" id="imageAnalysisPage" style="display: none;">
         <h2>Image Upload & Analysis</h2>
         <input type="file" id="imageUpload">
         <button class="primary-btn" onclick="analyzeImage()">Analyze Image</button>
-
         <h3>Image Analysis Result:</h3>
         <p id="imageAnalysisResult"></p>
         <button class="secondary-btn" onclick="showPage('homePage')">Back</button>
     </div>
-
 </body>
 </html>
