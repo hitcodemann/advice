@@ -24,13 +24,6 @@
         <h2>GitHub Repository Analysis</h2>
         <label for="githubUrl">GitHub Repository URL:</label>
         <input type="text" id="githubUrl" placeholder="Enter GitHub URL">
-        <label for="language">Select Repository Language:</label>
-        <select id="language">
-            <option value="JavaScript">JavaScript</option>
-            <option value=".NET">.NET</option>
-            <option value="Java">Java</option>
-            <option value="C++">C++</option>
-        </select>
         <label for="analysisQuery">Enter Analysis Query:</label>
         <input type="text" id="analysisQuery" placeholder="E.g., Analyze for AWS Lambda compatibility">
         <button class="primary-btn" onclick="analyzeRepo()">Analyze</button>
@@ -59,7 +52,10 @@
 
     <div class="container" id="imageAnalysisPage" style="display: none;">
         <h2>Image Upload & Analysis</h2>
+        <label for="imageUpload">Upload Image:</label>
         <input type="file" id="imageUpload">
+        <label for="imageAnalysisQuery">Enter Analysis Prompt:</label>
+        <input type="text" id="imageAnalysisQuery" placeholder="E.g., Describe the network architecture in this image">
         <button class="primary-btn" onclick="analyzeImage()">Analyze Image</button>
         <h3>Image Analysis Result:</h3>
         <p id="imageAnalysisResult"></p>
