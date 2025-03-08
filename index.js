@@ -2,76 +2,32 @@ function analyzeRepo() {
     console.log("analyzeRepo clicked");
     let githubUrl = document.getElementById("githubUrl").value;
     let analysisQuery = document.getElementById("analysisQuery").value;
-    let repoUpload = document.getElementById("repoUpload").files[0];
 
-    if (!analysisQuery) {
-        alert("Please enter an analysis query!");
+    if (!githubUrl || !analysisQuery) {
+        alert("Please enter both GitHub URL and an analysis request!");
         return;
     }
 
-    if (repoUpload) {
-        // Handle ZIP file upload
-        let reader = new FileReader();
-        reader.readAsDataURL(repoUpload);
-        
-        reader.onload = function () {
-            let base64String = reader.result.split(",")[1];
-            let filename = repoUpload.name;
-
-            console.log("Sending ZIP file:", filename, "Base64 length:", base64String.length);
-
-            fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", { 
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ 
-                    type: "github",
-                    filename: filename,
-                    image: base64String,  // Reusing 'image' field for consistency
-                    analysisQuery: analysisQuery
-                }) 
-            })
-            .then(response => {
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                return response.json();
-            })
-            .then(data => {
-                document.getElementById("analysisResult").innerText = data.analysis || "No result returned.";
-            })
-            .catch(error => {
-                console.error("Error fetching analysis:", error);
-                document.getElementById("analysisResult").innerText = "Error fetching analysis: " + error.message;
-            });
-        };
-
-        reader.onerror = function (error) {
-            console.error("Error converting ZIP file:", error);
-            alert("Failed to process ZIP file. Try again.");
-        };
-    } else if (githubUrl) {
-        // Handle URL-based analysis
-        fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", { 
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-                type: "github",
-                githubUrl: githubUrl, 
-                analysisQuery: analysisQuery 
-            }) 
-        })
-        .then(response => {
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-            return response.json();
-        })
-        .then(data => {
-            document.getElementById("analysisResult").innerText = data.analysis || "No result returned.";
-        })
-        .catch(error => {
-            console.error("Error fetching analysis:", error);
-            document.getElementById("analysisResult").innerText = "Error fetching analysis: " + error.message;
-        });
-    } else {
-        alert("Please enter a GitHub URL or upload a ZIP file!");
-    }
+    fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+            type: "github",
+            githubUrl: githubUrl, 
+            analysisQuery: analysisQuery 
+        }) 
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        return response.json();
+    })
+    .then(data => {
+        document.getElementById("analysisResult").innerText = data.analysis || "No result returned.";
+    })
+    .catch(error => {
+        console.error("Error fetching analysis:", error);
+        document.getElementById("analysisResult").innerText = "Error fetching analysis: " + error.message;
+    });
 }
 
 function getInvestmentAdvice() {
@@ -139,7 +95,7 @@ function analyzeImage() {
                 type: "imageUpload",
                 filename: filename,
                 image: base64String,
-                analysisQuery: imageAnalysisQuery
+                analysisQuery: imageAnalysisQuery  // Add the user's prompt to the request
             }) 
         })
         .then(response => {
