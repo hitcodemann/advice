@@ -2,7 +2,6 @@ function analyzeRepo() {
     console.log("analyzeRepo clicked");
     let githubUrl = document.getElementById("githubUrl").value;
     let analysisQuery = document.getElementById("analysisQuery").value;
-    let language = document.getElementById("language").value;
 
     if (!githubUrl || !analysisQuery) {
         alert("Please enter both GitHub URL and an analysis request!");
@@ -15,7 +14,6 @@ function analyzeRepo() {
         body: JSON.stringify({ 
             type: "github",
             githubUrl: githubUrl, 
-            language: language,
             analysisQuery: analysisQuery 
         }) 
     })
@@ -69,9 +67,15 @@ function getInvestmentAdvice() {
 function analyzeImage() {
     console.log("analyzeImage clicked");
     let imageUpload = document.getElementById("imageUpload").files[0];
+    let imageAnalysisQuery = document.getElementById("imageAnalysisQuery").value;
 
     if (!imageUpload) {
         alert("Please upload an image!");
+        return;
+    }
+
+    if (!imageAnalysisQuery) {
+        alert("Please enter an analysis prompt!");
         return;
     }
 
@@ -90,7 +94,8 @@ function analyzeImage() {
             body: JSON.stringify({ 
                 type: "imageUpload",
                 filename: filename,
-                image: base64String
+                image: base64String,
+                analysisQuery: imageAnalysisQuery  // Add the user's prompt to the request
             }) 
         })
         .then(response => {
