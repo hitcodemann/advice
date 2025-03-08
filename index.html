@@ -22,10 +22,12 @@
 
     <div class="container" id="githubAnalysisPage" style="display: none;">
         <h2>GitHub Repository Analysis</h2>
-        <label for="githubUrl">GitHub Repository URL:</label>
-        <input type="text" id="githubUrl" placeholder="Enter GitHub URL">
+        <label for="githubUrl">GitHub Repository URL (Optional):</label>
+        <input type="text" id="githubUrl" placeholder="Enter GitHub URL (or upload ZIP)">
+        <label for="repoUpload">Upload Repository ZIP File:</label>
+        <input type="file" id="repoUpload" accept=".zip">
         <label for="analysisQuery">Enter Analysis Query:</label>
-        <input type="text" id="analysisQuery" placeholder="E.g., Analyze for AWS Lambda compatibility">
+        <input type="text" id="analysisQuery" placeholder="E.g., Count the lines of code or Analyze for AWS Lambda compatibility">
         <button class="primary-btn" onclick="analyzeRepo()">Analyze</button>
         <h3>Analysis Result:</h3>
         <p id="analysisResult"></p>
@@ -53,9 +55,9 @@
     <div class="container" id="imageAnalysisPage" style="display: none;">
         <h2>Image Upload & Analysis</h2>
         <label for="imageUpload">Upload Image:</label>
-        <input type="file" id="imageUpload">
+        <input type="file" id="imageUpload" accept=".png,.jpg,.jpeg">
         <label for="imageAnalysisQuery">Enter Analysis Prompt:</label>
-        <input type="text" id="imageAnalysisQuery" placeholder="E.g., Describe the network architecture in this image">
+        <input type="text" id="imageAnalysisQuery" placeholder="E.g., Describe the network architecture">
         <button class="primary-btn" onclick="analyzeImage()">Analyze Image</button>
         <h3>Image Analysis Result:</h3>
         <p id="imageAnalysisResult"></p>
