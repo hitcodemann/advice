@@ -1,6 +1,3 @@
-// Global variable to store PDF data
-let pdfData = { github: null, image: null };
-
 function analyzeRepo() {
     console.log("analyzeRepo clicked");
     let githubUrl = document.getElementById("githubUrl").value;
@@ -25,9 +22,9 @@ function analyzeRepo() {
         return response.json();
     })
     .then(data => {
-        document.getElementById("analysisResult").innerText = data.analysis || "No result returned.";
-        pdfData.github = data.pdf; // Store PDF base64 string
-        document.getElementById("downloadGithubPdf").style.display = pdfData.github ? "inline-block" : "none";
+        let resultText = data.analysis || "No result returned.";
+        document.getElementById("analysisResult").innerText = resultText;
+        document.getElementById("downloadGithubPdf").style.display = "block"; // Show download button
     })
     .catch(error => {
         console.error("Error fetching analysis:", error);
@@ -66,7 +63,7 @@ function analyzeImage() {
                 type: "imageUpload",
                 filename: filename,
                 image: base64String,
-                analysisQuery: imageAnalysisQuery 
+                analysisQuery: imageAnalysisQuery  
             }) 
         })
         .then(response => {
@@ -74,9 +71,9 @@ function analyzeImage() {
             return response.json();
         })
         .then(data => {
-            document.getElementById("imageAnalysisResult").innerText = data.imageAnalysis || "No analysis result returned.";
-            pdfData.image = data.pdf; // Store PDF base64 string
-            document.getElementById("downloadImagePdf").style.display = pdfData.image ? "inline-block" : "none";
+            let resultText = data.imageAnalysis || "No analysis result returned.";
+            document.getElementById("imageAnalysisResult").innerText = resultText;
+            document.getElementById("downloadImagePdf").style.display = "block"; // Show download button
         })
         .catch(error => {
             console.error("Error fetching image analysis:", error);
@@ -91,22 +88,22 @@ function analyzeImage() {
 }
 
 function downloadPdf(type) {
-    const pdfBase64 = type === "github" ? pdfData.github : pdfData.image;
-    if (!pdfBase64) {
-        alert("No PDF available to download!");
-        return;
+    let { jsPDF } = window.jspdf;
+    let doc = new jsPDF();
+
+    if (type === "github") {
+        let resultText = document.getElementById("analysisResult").innerText;
+        doc.text("GitHub Repository Analysis Result", 10, 10);
+        doc.text(resultText, 10, 20);
+        doc.save("GitHub_Analysis_Result.pdf");
+    } else if (type === "image") {
+        let resultText = document.getElementById("imageAnalysisResult").innerText;
+        doc.text("Image Analysis Result", 10, 10);
+        doc.text(resultText, 10, 20);
+        doc.save("Image_Analysis_Result.pdf");
     }
-
-    const linkSource = `data:application/pdf;base64,${pdfBase64}`;
-    const downloadLink = document.createElement("a");
-    const fileName = `${type}_analysis_${new Date().toISOString().split('T')[0]}.pdf`;
-
-    downloadLink.href = linkSource;
-    downloadLink.download = fileName;
-    downloadLink.click();
 }
 
-// Existing showPage function remains unchanged
 function showPage(pageId) {
     console.log("showPage called with:", pageId);
     document.getElementById("homePage").style.display = "none";
