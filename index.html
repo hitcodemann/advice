@@ -23,18 +23,6 @@
     </div>
 
     <!-- GitHub Analysis Page -->
-    <div class="container" id="githubAnalysisPage" style="display: none;">
-        <h2>GitHub Repository Analysis</h2>
-        <label for="githubUrl">GitHub Repository URL:</label>
-        <input type="text" id="githubUrl" placeholder="Enter GitHub URL">
-        <label for="analysisQuery">Enter Analysis Query:</label>
-        <input type="text" id="analysisQuery" placeholder="E.g., Analyze for AWS Lambda compatibility">
-        <button class="primary-btn" onclick="analyzeRepo()">Analyze</button>
-        <h3>Analysis Result:</h3>
-        <p id="analysisResult"></p>
-        <div id="analysisResultContainer"></div>
-        <button class="secondary-btn" onclick="showPage('homePage')">Back</button>
-    </div>
 
     <!-- Investment Advice Page -->
     <div class="container" id="investmentPage" style="display: none;">
@@ -56,17 +44,32 @@
     </div>
 
     <!-- Image Upload & Analysis Page -->
-    <div class="container" id="imageAnalysisPage" style="display: none;">
-        <h2>Image Upload & Analysis</h2>
-        <label for="imageUpload">Upload Image:</label>
-        <input type="file" id="imageUpload">
-        <label for="imageAnalysisQuery">Enter Analysis Prompt:</label>
-        <input type="text" id="imageAnalysisQuery" placeholder="E.g., Describe the network architecture in this image">
-        <button class="primary-btn" onclick="analyzeImage()">Analyze Image</button>
-        <h3>Image Analysis Result:</h3>
-        <p id="imageAnalysisResult"></p>
-        <div id="imageAnalysisResultContainer"></div>
-        <button class="secondary-btn" onclick="showPage('homePage')">Back</button>
-    </div>
+    <!-- Inside the githubAnalysisPage container -->
+<div class="container" id="githubAnalysisPage" style="display: none;">
+    <h2>GitHub Repository Analysis</h2>
+    <label for="githubUrl">GitHub Repository URL:</label>
+    <input type="text" id="githubUrl" placeholder="Enter GitHub URL">
+    <label for="analysisQuery">Enter Analysis Query:</label>
+    <input type="text" id="analysisQuery" placeholder="E.g., Analyze for AWS Lambda compatibility">
+    <button class="primary-btn" onclick="analyzeRepo()">Analyze</button>
+    <h3>Analysis Result:</h3>
+    <p id="analysisResult"></p>
+    <button id="downloadGithubPdf" class="primary-btn" style="display: none;" onclick="downloadPdf('github')">Download PDF</button>
+    <button class="secondary-btn" onclick="showPage('homePage')">Back</button>
+</div>
+
+<!-- Inside the imageAnalysisPage container -->
+<div class="container" id="imageAnalysisPage" style="display: none;">
+    <h2>Image Upload & Analysis</h2>
+    <label for="imageUpload">Upload Image:</label>
+    <input type="file" id="imageUpload">
+    <label for="imageAnalysisQuery">Enter Analysis Prompt:</label>
+    <input type="text" id="imageAnalysisQuery" placeholder="E.g., Describe the network architecture in this image">
+    <button class="primary-btn" onclick="analyzeImage()">Analyze Image</button>
+    <h3>Image Analysis Result:</h3>
+    <p id="imageAnalysisResult"></p>
+    <button id="downloadImagePdf" class="primary-btn" style="display: none;" onclick="downloadPdf('image')">Download PDF</button>
+    <button class="secondary-btn" onclick="showPage('homePage')">Back</button>
+</div>
 </body>
 </html>
