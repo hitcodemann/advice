@@ -14,6 +14,7 @@
         <img src="umbrella.png" alt="Travelers Logo" class="logo">
     </header>
 
+    <!-- Home Page -->
     <div class="container" id="homePage">
         <h2>Welcome to AI Analysis Portal</h2>
         <button class="primary-btn" onclick="showPage('githubAnalysisPage')">GitHub Repository Analysis</button>
@@ -21,6 +22,7 @@
         <button class="primary-btn" onclick="showPage('imageAnalysisPage')">Image Upload & Analysis</button>
     </div>
 
+    <!-- GitHub Analysis Page -->
     <div class="container" id="githubAnalysisPage" style="display: none;">
         <h2>GitHub Repository Analysis</h2>
         <label for="githubUrl">GitHub Repository URL:</label>
@@ -34,6 +36,26 @@
         <button class="secondary-btn" onclick="showPage('homePage')">Back</button>
     </div>
 
+    <!-- Investment Advice Page -->
+    <div class="container" id="investmentPage" style="display: none;">
+        <h2>Investment Advice</h2>
+        <label for="name">Name:</label>
+        <input type="text" id="name" placeholder="Enter your name">
+        <label for="salary">Salary:</label>
+        <input type="number" id="salary" placeholder="Enter your salary">
+        <label for="investmentType">Investment Type:</label>
+        <select id="investmentType">
+            <option value="Mutual Fund">Mutual Fund</option>
+            <option value="SIP">SIP</option>
+            <option value="Property">Property</option>
+        </select>
+        <button class="primary-btn" onclick="getInvestmentAdvice()">Get Advice</button>
+        <h3>Investment Advice:</h3>
+        <p id="investmentResult"></p>
+        <button class="secondary-btn" onclick="showPage('homePage')">Back</button>
+    </div>
+
+    <!-- Image Upload & Analysis Page -->
     <div class="container" id="imageAnalysisPage" style="display: none;">
         <h2>Image Upload & Analysis</h2>
         <label for="imageUpload">Upload Image:</label>
