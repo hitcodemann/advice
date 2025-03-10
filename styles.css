@@ -1,6 +1,5 @@
 body {
     font-family: Arial, sans-serif;
-    text-align: left;
     background-color: #f4f4f4;
     margin: 0;
 }
@@ -10,6 +9,7 @@ header {
     color: white;
     padding: 15px;
     font-size: 24px;
+    text-align: center; /* Keep header centered */
 }
 
 .container {
@@ -19,6 +19,7 @@ header {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: left; /* Override body centering for container content */
 }
 
 input, select {
@@ -66,4 +67,22 @@ input, select {
     right: 20px;
     width: 80px;
     height: auto;
+}
+
+/* Specific styling for analysis results */
+#analysisResult, #imageAnalysisResult {
+    margin-top: 10px;
+    text-align: left; /* Ensure left alignment */
+    font-family: monospace; /* Improves readability of structured text */
+}
+
+#analysisResult pre, #imageAnalysisResult pre {
+    margin: 0;
+    padding: 10px;
+    background-color: #f9f9f9; /* Light background for readability */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    white-space: pre-wrap; /* Preserve line breaks and wrap text */
+    text-align: left; /* Reinforce left alignment */
+    font-size: 14px;
 }
