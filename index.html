@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Travelers AI Portal</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="index.js" defer></script>
 </head>
 <body>
@@ -29,6 +30,7 @@
         <button class="primary-btn" onclick="analyzeRepo()">Analyze</button>
         <h3>Analysis Result:</h3>
         <p id="analysisResult"></p>
+        <button id="downloadGithubPdf" class="secondary-btn" onclick="downloadPdf('github')" style="display: none;">Download PDF</button>
         <button class="secondary-btn" onclick="showPage('homePage')">Back</button>
     </div>
 
@@ -59,6 +61,7 @@
         <button class="primary-btn" onclick="analyzeImage()">Analyze Image</button>
         <h3>Image Analysis Result:</h3>
         <p id="imageAnalysisResult"></p>
+        <button id="downloadImagePdf" class="secondary-btn" onclick="downloadPdf('image')" style="display: none;">Download PDF</button>
         <button class="secondary-btn" onclick="showPage('homePage')">Back</button>
     </div>
 </body>
