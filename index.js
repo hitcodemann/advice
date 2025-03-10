@@ -23,7 +23,7 @@ function analyzeRepo() {
     })
     .then(data => {
         let resultText = data.analysis || "No result returned.";
-        document.getElementById("analysisResult").innerText = resultText;
+        document.getElementById("analysisResult").innerHTML = `<pre>${resultText}</pre>`;
         document.getElementById("downloadGithubPdf").style.display = "block"; // Show download button
     })
     .catch(error => {
@@ -72,7 +72,7 @@ function analyzeImage() {
         })
         .then(data => {
             let resultText = data.imageAnalysis || "No analysis result returned.";
-            document.getElementById("imageAnalysisResult").innerText = resultText;
+            document.getElementById("imageAnalysisResult").innerHTML = `<pre>${resultText}</pre>`;
             document.getElementById("downloadImagePdf").style.display = "block"; // Show download button
         })
         .catch(error => {
