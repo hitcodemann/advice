@@ -1,3 +1,6 @@
+// Global variable to store PDF data
+let pdfData = { github: null, image: null };
+
 function analyzeRepo() {
     console.log("analyzeRepo clicked");
     let githubUrl = document.getElementById("githubUrl").value;
@@ -22,28 +25,9 @@ function analyzeRepo() {
         return response.json();
     })
     .then(data => {
-        let analysisText = data.analysis || "No result returned.";
-
-        // Display text in UI
-        document.getElementById("analysisResult").innerText = analysisText;
-
-        // Generate PDF for download
-        let pdf = new jsPDF();
-        pdf.text(20, 20, "GitHub Analysis Result:");
-        pdf.text(20, 30, analysisText);
-        let pdfBlob = pdf.output("blob");
-
-        // Create download link
-        let downloadLink = document.createElement("a");
-        downloadLink.href = URL.createObjectURL(pdfBlob);
-        downloadLink.download = "GitHub_Analysis_Result.pdf";
-        downloadLink.innerText = "Download Result as PDF";
-        downloadLink.className = "primary-btn";
-
-        // Append download link
-        let resultContainer = document.getElementById("analysisResultContainer");
-        resultContainer.innerHTML = "";  // Clear old content
-        resultContainer.appendChild(downloadLink);
+        document.getElementById("analysisResult").innerText = data.analysis || "No result returned.";
+        pdfData.github = data.pdf; // Store PDF base64 string
+        document.getElementById("downloadGithubPdf").style.display = pdfData.github ? "inline-block" : "none";
     })
     .catch(error => {
         console.error("Error fetching analysis:", error);
@@ -82,7 +66,7 @@ function analyzeImage() {
                 type: "imageUpload",
                 filename: filename,
                 image: base64String,
-                analysisQuery: imageAnalysisQuery  
+                analysisQuery: imageAnalysisQuery 
             }) 
         })
         .then(response => {
@@ -90,28 +74,9 @@ function analyzeImage() {
             return response.json();
         })
         .then(data => {
-            let analysisText = data.imageAnalysis || "No analysis result returned.";
-
-            // Display text in UI
-            document.getElementById("imageAnalysisResult").innerText = analysisText;
-
-            // Generate PDF for download
-            let pdf = new jsPDF();
-            pdf.text(20, 20, "Image Analysis Result:");
-            pdf.text(20, 30, analysisText);
-            let pdfBlob = pdf.output("blob");
-
-            // Create download link
-            let downloadLink = document.createElement("a");
-            downloadLink.href = URL.createObjectURL(pdfBlob);
-            downloadLink.download = "Image_Analysis_Result.pdf";
-            downloadLink.innerText = "Download Result as PDF";
-            downloadLink.className = "primary-btn";
-
-            // Append download link
-            let resultContainer = document.getElementById("imageAnalysisResultContainer");
-            resultContainer.innerHTML = "";  // Clear old content
-            resultContainer.appendChild(downloadLink);
+            document.getElementById("imageAnalysisResult").innerText = data.imageAnalysis || "No analysis result returned.";
+            pdfData.image = data.pdf; // Store PDF base64 string
+            document.getElementById("downloadImagePdf").style.display = pdfData.image ? "inline-block" : "none";
         })
         .catch(error => {
             console.error("Error fetching image analysis:", error);
@@ -125,6 +90,23 @@ function analyzeImage() {
     };
 }
 
+function downloadPdf(type) {
+    const pdfBase64 = type === "github" ? pdfData.github : pdfData.image;
+    if (!pdfBase64) {
+        alert("No PDF available to download!");
+        return;
+    }
+
+    const linkSource = `data:application/pdf;base64,${pdfBase64}`;
+    const downloadLink = document.createElement("a");
+    const fileName = `${type}_analysis_${new Date().toISOString().split('T')[0]}.pdf`;
+
+    downloadLink.href = linkSource;
+    downloadLink.download = fileName;
+    downloadLink.click();
+}
+
+// Existing showPage function remains unchanged
 function showPage(pageId) {
     console.log("showPage called with:", pageId);
     document.getElementById("homePage").style.display = "none";
