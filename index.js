@@ -68,7 +68,7 @@ function analyzeImage() {
         })
         .then(response => {
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-            return response.json();
+        return response.json();
         })
         .then(data => {
             let resultText = data.imageAnalysis || "No analysis result returned.";
@@ -90,44 +90,65 @@ function analyzeImage() {
 function downloadPdf(type) {
     let { jsPDF } = window.jspdf;
     let doc = new jsPDF();
-    let pageWidth = doc.internal.pageSize.getWidth() - 20; // Leave 10-unit margins on each side
-    let yPosition = 20; // Starting y-coordinate for content
+    let pageWidth = doc.internal.pageSize.getWidth() - 20; // 10-unit margins on each side
+    let yPosition = 20; // Starting y-coordinate
+
+    // Helper function to add text with proper indentation
+    function addTextWithIndent(text, indentLevel, xBase) {
+        let indent = indentLevel * 5; // 5 units per indent level
+        let lines = doc.splitTextToSize(text, pageWidth - indent);
+        doc.text(lines, xBase + indent, yPosition);
+        yPosition += lines.length * 7; // Line spacing
+    }
 
     if (type === "github") {
-        let resultText = document.getElementById("analysisResult").innerText;
+        let resultElement = document.getElementById("analysisResult").querySelector("pre");
+        let resultText = resultElement ? resultElement.innerText : "No result available.";
         doc.text("GitHub Repository Analysis Result", 10, 10);
 
-        // Split text into lines and handle formatting
+        // Split into lines and process each line
         let lines = resultText.split("\n");
         lines.forEach(line => {
             let trimmedLine = line.trim();
-            if (trimmedLine.startsWith("-")) {
-                let wrappedLines = doc.splitTextToSize(`• ${trimmedLine.substring(1).trim()}`, pageWidth);
-                doc.text(wrappedLines, 10, yPosition);
-                yPosition += wrappedLines.length * 7; // Adjust spacing based on number of wrapped lines
+            if (!trimmedLine) {
+                yPosition += 7; // Extra spacing for empty lines
+                return;
+            }
+
+            if (trimmedLine.startsWith("```")) {
+                // Skip code block markers (handled by indentation)
+                return;
+            } else if (line.match(/^\s*├──/)) {
+                addTextWithIndent(line.replace("├──", "├─"), 1, 10); // Level 1 indent
+            } else if (line.match(/^\s*│\s*└──/)) {
+                addTextWithIndent(line.replace("│   └──", "│ └─"), 2, 10); // Level 2 indent
+            } else if (line.match(/^\s*│\s*├──/)) {
+                addTextWithIndent(line.replace("│   ├──", "│ ├─"), 2, 10); // Level 2 indent
+            } else if (trimmedLine.startsWith("-") || trimmedLine.match(/^\d+\./)) {
+                addTextWithIndent(`• ${trimmedLine.substring(trimmedLine.indexOf(" ") + 1)}`, 0, 10); // Bullet points
             } else {
-                let wrappedLines = doc.splitTextToSize(trimmedLine, pageWidth);
-                doc.text(wrappedLines, 10, yPosition);
-                yPosition += wrappedLines.length * 7;
+                addTextWithIndent(trimmedLine, 0, 10); // No indent for regular text
             }
         });
         doc.save("GitHub_Analysis_Result.pdf");
     } else if (type === "image") {
-        let resultText = document.getElementById("imageAnalysisResult").innerText;
+        let resultElement = document.getElementById("imageAnalysisResult").querySelector("pre");
+        let resultText = resultElement ? resultElement.innerText : "No result available.";
         doc.text("Image Analysis Result", 10, 10);
 
-        // Split text into lines and handle formatting
+        // Split into lines and process each line
         let lines = resultText.split("\n");
         lines.forEach(line => {
             let trimmedLine = line.trim();
-            if (trimmedLine.startsWith("-")) {
-                let wrappedLines = doc.splitTextToSize(`• ${trimmedLine.substring(1).trim()}`, pageWidth);
-                doc.text(wrappedLines, 10, yPosition);
-                yPosition += wrappedLines.length * 7; // Adjust spacing based on number of wrapped lines
+            if (!trimmedLine) {
+                yPosition += 7; // Extra spacing for empty lines
+                return;
+            }
+
+            if (trimmedLine.startsWith("-") || trimmedLine.match(/^\d+\./)) {
+                addTextWithIndent(`• ${trimmedLine.substring(trimmedLine.indexOf(" ") + 1)}`, 0, 10); // Bullet points
             } else {
-                let wrappedLines = doc.splitTextToSize(trimmedLine, pageWidth);
-                doc.text(wrappedLines, 10, yPosition);
-                yPosition += wrappedLines.length * 7;
+                addTextWithIndent(trimmedLine, 0, 10); // No indent for regular text
             }
         });
         doc.save("Image_Analysis_Result.pdf");
