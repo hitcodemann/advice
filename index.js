@@ -22,9 +22,28 @@ function analyzeRepo() {
         return response.json();
     })
     .then(data => {
-        let resultText = data.analysis || "No result returned.";
-        document.getElementById("analysisResult").innerText = resultText;
-        document.getElementById("downloadGithubPdf").style.display = "block"; // Show download button
+        let analysisText = data.analysis || "No result returned.";
+
+        // Display text in UI
+        document.getElementById("analysisResult").innerText = analysisText;
+
+        // Generate PDF for download
+        let pdf = new jsPDF();
+        pdf.text(20, 20, "GitHub Analysis Result:");
+        pdf.text(20, 30, analysisText);
+        let pdfBlob = pdf.output("blob");
+
+        // Create download link
+        let downloadLink = document.createElement("a");
+        downloadLink.href = URL.createObjectURL(pdfBlob);
+        downloadLink.download = "GitHub_Analysis_Result.pdf";
+        downloadLink.innerText = "Download Result as PDF";
+        downloadLink.className = "primary-btn";
+
+        // Append download link
+        let resultContainer = document.getElementById("analysisResultContainer");
+        resultContainer.innerHTML = "";  // Clear old content
+        resultContainer.appendChild(downloadLink);
     })
     .catch(error => {
         console.error("Error fetching analysis:", error);
@@ -71,9 +90,28 @@ function analyzeImage() {
             return response.json();
         })
         .then(data => {
-            let resultText = data.imageAnalysis || "No analysis result returned.";
-            document.getElementById("imageAnalysisResult").innerText = resultText;
-            document.getElementById("downloadImagePdf").style.display = "block"; // Show download button
+            let analysisText = data.imageAnalysis || "No analysis result returned.";
+
+            // Display text in UI
+            document.getElementById("imageAnalysisResult").innerText = analysisText;
+
+            // Generate PDF for download
+            let pdf = new jsPDF();
+            pdf.text(20, 20, "Image Analysis Result:");
+            pdf.text(20, 30, analysisText);
+            let pdfBlob = pdf.output("blob");
+
+            // Create download link
+            let downloadLink = document.createElement("a");
+            downloadLink.href = URL.createObjectURL(pdfBlob);
+            downloadLink.download = "Image_Analysis_Result.pdf";
+            downloadLink.innerText = "Download Result as PDF";
+            downloadLink.className = "primary-btn";
+
+            // Append download link
+            let resultContainer = document.getElementById("imageAnalysisResultContainer");
+            resultContainer.innerHTML = "";  // Clear old content
+            resultContainer.appendChild(downloadLink);
         })
         .catch(error => {
             console.error("Error fetching image analysis:", error);
@@ -85,23 +123,6 @@ function analyzeImage() {
         console.error("Error converting image:", error);
         alert("Failed to process image. Try again.");
     };
-}
-
-function downloadPdf(type) {
-    let { jsPDF } = window.jspdf;
-    let doc = new jsPDF();
-
-    if (type === "github") {
-        let resultText = document.getElementById("analysisResult").innerText;
-        doc.text("GitHub Repository Analysis Result", 10, 10);
-        doc.text(resultText, 10, 20);
-        doc.save("GitHub_Analysis_Result.pdf");
-    } else if (type === "image") {
-        let resultText = document.getElementById("imageAnalysisResult").innerText;
-        doc.text("Image Analysis Result", 10, 10);
-        doc.text(resultText, 10, 20);
-        doc.save("Image_Analysis_Result.pdf");
-    }
 }
 
 function showPage(pageId) {
