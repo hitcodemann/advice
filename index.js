@@ -90,16 +90,46 @@ function analyzeImage() {
 function downloadPdf(type) {
     let { jsPDF } = window.jspdf;
     let doc = new jsPDF();
+    let pageWidth = doc.internal.pageSize.getWidth() - 20; // Leave 10-unit margins on each side
+    let yPosition = 20; // Starting y-coordinate for content
 
     if (type === "github") {
         let resultText = document.getElementById("analysisResult").innerText;
         doc.text("GitHub Repository Analysis Result", 10, 10);
-        doc.text(resultText, 10, 20);
+
+        // Split text into lines and handle formatting
+        let lines = resultText.split("\n");
+        lines.forEach(line => {
+            let trimmedLine = line.trim();
+            if (trimmedLine.startsWith("-")) {
+                let wrappedLines = doc.splitTextToSize(`• ${trimmedLine.substring(1).trim()}`, pageWidth);
+                doc.text(wrappedLines, 10, yPosition);
+                yPosition += wrappedLines.length * 7; // Adjust spacing based on number of wrapped lines
+            } else {
+                let wrappedLines = doc.splitTextToSize(trimmedLine, pageWidth);
+                doc.text(wrappedLines, 10, yPosition);
+                yPosition += wrappedLines.length * 7;
+            }
+        });
         doc.save("GitHub_Analysis_Result.pdf");
     } else if (type === "image") {
         let resultText = document.getElementById("imageAnalysisResult").innerText;
         doc.text("Image Analysis Result", 10, 10);
-        doc.text(resultText, 10, 20);
+
+        // Split text into lines and handle formatting
+        let lines = resultText.split("\n");
+        lines.forEach(line => {
+            let trimmedLine = line.trim();
+            if (trimmedLine.startsWith("-")) {
+                let wrappedLines = doc.splitTextToSize(`• ${trimmedLine.substring(1).trim()}`, pageWidth);
+                doc.text(wrappedLines, 10, yPosition);
+                yPosition += wrappedLines.length * 7; // Adjust spacing based on number of wrapped lines
+            } else {
+                let wrappedLines = doc.splitTextToSize(trimmedLine, pageWidth);
+                doc.text(wrappedLines, 10, yPosition);
+                yPosition += wrappedLines.length * 7;
+            }
+        });
         doc.save("Image_Analysis_Result.pdf");
     }
 }
