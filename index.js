@@ -22,45 +22,13 @@ function analyzeRepo() {
         return response.json();
     })
     .then(data => {
-        document.getElementById("analysisResult").innerText = data.analysis || "No result returned.";
+        let resultText = data.analysis || "No result returned.";
+        document.getElementById("analysisResult").innerText = resultText;
+        document.getElementById("downloadGithubPdf").style.display = "block"; // Show download button
     })
     .catch(error => {
         console.error("Error fetching analysis:", error);
         document.getElementById("analysisResult").innerText = "Error fetching analysis: " + error.message;
-    });
-}
-
-function getInvestmentAdvice() {
-    console.log("getInvestmentAdvice clicked");
-    let name = document.getElementById("name").value;
-    let salary = document.getElementById("salary").value;
-    let investmentType = document.getElementById("investmentType").value;
-
-    if (!name || !salary || !investmentType) {
-        alert("Please fill out all fields!");
-        return;
-    }
-
-    fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", { 
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-            type: "investment",
-            name: name,
-            salary: salary,
-            investmentType: investmentType 
-        }) 
-    })
-    .then(response => {
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        return response.json();
-    })
-    .then(data => {
-        document.getElementById("investmentResult").innerText = data.investmentAdvice || "No advice returned.";
-    })
-    .catch(error => {
-        console.error("Error fetching investment advice:", error);
-        document.getElementById("investmentResult").innerText = "Error fetching advice: " + error.message;
     });
 }
 
@@ -95,7 +63,7 @@ function analyzeImage() {
                 type: "imageUpload",
                 filename: filename,
                 image: base64String,
-                analysisQuery: imageAnalysisQuery  // Add the user's prompt to the request
+                analysisQuery: imageAnalysisQuery  
             }) 
         })
         .then(response => {
@@ -103,7 +71,9 @@ function analyzeImage() {
             return response.json();
         })
         .then(data => {
-            document.getElementById("imageAnalysisResult").innerText = data.imageAnalysis || "No analysis result returned.";
+            let resultText = data.imageAnalysis || "No analysis result returned.";
+            document.getElementById("imageAnalysisResult").innerText = resultText;
+            document.getElementById("downloadImagePdf").style.display = "block"; // Show download button
         })
         .catch(error => {
             console.error("Error fetching image analysis:", error);
@@ -115,6 +85,23 @@ function analyzeImage() {
         console.error("Error converting image:", error);
         alert("Failed to process image. Try again.");
     };
+}
+
+function downloadPdf(type) {
+    let { jsPDF } = window.jspdf;
+    let doc = new jsPDF();
+
+    if (type === "github") {
+        let resultText = document.getElementById("analysisResult").innerText;
+        doc.text("GitHub Repository Analysis Result", 10, 10);
+        doc.text(resultText, 10, 20);
+        doc.save("GitHub_Analysis_Result.pdf");
+    } else if (type === "image") {
+        let resultText = document.getElementById("imageAnalysisResult").innerText;
+        doc.text("Image Analysis Result", 10, 10);
+        doc.text(resultText, 10, 20);
+        doc.save("Image_Analysis_Result.pdf");
+    }
 }
 
 function showPage(pageId) {
