@@ -2,11 +2,16 @@ function analyzeRepo() {
     console.log("analyzeRepo clicked");
     let githubUrl = document.getElementById("githubUrl").value;
     let analysisQuery = document.getElementById("analysisQuery").value;
+    let loadingSpinner = document.getElementById("githubLoading");
 
     if (!githubUrl || !analysisQuery) {
         alert("Please enter both GitHub URL and an analysis request!");
         return;
     }
+
+    // Show loading spinner
+    loadingSpinner.style.display = "block";
+    document.getElementById("analysisResult").innerHTML = ""; // Clear previous result
 
     fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", { 
         method: "POST",
@@ -25,10 +30,12 @@ function analyzeRepo() {
         let resultText = data.analysis || "No result returned.";
         document.getElementById("analysisResult").innerHTML = `<pre>${resultText}</pre>`;
         document.getElementById("downloadGithubPdf").style.display = "block"; // Show download button
+        loadingSpinner.style.display = "none"; // Hide loading spinner
     })
     .catch(error => {
         console.error("Error fetching analysis:", error);
         document.getElementById("analysisResult").innerText = "Error fetching analysis: " + error.message;
+        loadingSpinner.style.display = "none"; // Hide loading spinner on error
     });
 }
 
@@ -36,6 +43,7 @@ function analyzeImage() {
     console.log("analyzeImage clicked");
     let imageUpload = document.getElementById("imageUpload").files[0];
     let imageAnalysisQuery = document.getElementById("imageAnalysisQuery").value;
+    let loadingSpinner = document.getElementById("imageLoading");
 
     if (!imageUpload) {
         alert("Please upload an image!");
@@ -46,6 +54,10 @@ function analyzeImage() {
         alert("Please enter an analysis prompt!");
         return;
     }
+
+    // Show loading spinner
+    loadingSpinner.style.display = "block";
+    document.getElementById("imageAnalysisResult").innerHTML = ""; // Clear previous result
 
     let reader = new FileReader();
     reader.readAsDataURL(imageUpload);
@@ -74,16 +86,19 @@ function analyzeImage() {
             let resultText = data.imageAnalysis || "No analysis result returned.";
             document.getElementById("imageAnalysisResult").innerHTML = `<pre>${resultText}</pre>`;
             document.getElementById("downloadImagePdf").style.display = "block"; // Show download button
+            loadingSpinner.style.display = "none"; // Hide loading spinner
         })
         .catch(error => {
             console.error("Error fetching image analysis:", error);
             document.getElementById("imageAnalysisResult").innerText = "Error fetching image analysis: " + error.message;
+            loadingSpinner.style.display = "none"; // Hide loading spinner on error
         });
     };
 
     reader.onerror = function (error) {
         console.error("Error converting image:", error);
         alert("Failed to process image. Try again.");
+        loadingSpinner.style.display = "none"; // Hide loading spinner on error
     };
 }
 
