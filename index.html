@@ -35,6 +35,7 @@
         <label for="analysisQuery">Enter Analysis Query:</label>
         <input type="text" id="analysisQuery" placeholder="E.g., Analyze for AWS Lambda compatibility">
         <button class="primary-btn" onclick="analyzeRepo()">Analyze</button>
+        <div id="githubLoading" class="loader" style="display: none;"></div> <!-- Loading Spinner -->
         <h3>Analysis Result:</h3>
         <p id="analysisResult"></p>
         <button id="downloadGithubPdf" class="secondary-btn" onclick="downloadPdf('github')" style="display: none;">Download PDF</button>
@@ -66,6 +67,7 @@
         <label for="imageAnalysisQuery">Enter Analysis Prompt:</label>
         <input type="text" id="imageAnalysisQuery" placeholder="E.g., Describe the network architecture in this image">
         <button class="primary-btn" onclick="analyzeImage()">Analyze Image</button>
+        <div id="imageLoading" class="loader" style="display: none;"></div> <!-- Loading Spinner -->
         <h3>Image Analysis Result:</h3>
         <p id="imageAnalysisResult"></p>
         <button id="downloadImagePdf" class="secondary-btn" onclick="downloadPdf('image')" style="display: none;">Download PDF</button>
