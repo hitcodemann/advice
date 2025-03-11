@@ -174,6 +174,7 @@ function showPage(pageId) {
     console.log("showPage called with:", pageId);
     // Hide all pages
     document.getElementById("landingPage").style.display = "none";
+    document.getElementById("chaosMeshPage").style.display = "none";
     document.getElementById("appPage").style.display = "none";
     document.getElementById("githubAnalysisPage").style.display = "none";
     document.getElementById("investmentPage").style.display = "none";
