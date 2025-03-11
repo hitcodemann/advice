@@ -16,8 +16,14 @@
 
     <div class="container" id="landingPage">
         <h2>Welcome to Travelers AI Portal</h2>
-        <a href="http://a5816a7b52bf94d4aadd0ca07238154b-328713437.us-west-2.elb.amazonaws.com:2333/#/dashboard" target="_blank" class="primary-btn">Chaos Mesh</a>
+        <button class="primary-btn" onclick="showPage('chaosMeshPage')">Chaos Mesh</button>
         <button class="primary-btn" onclick="showPage('appPage')">Enter AI Analysis App</button>
+    </div>
+
+    <div class="container" id="chaosMeshPage" style="display: none;">
+        <h2>Chaos Mesh Access</h2>
+        <a href="http://a5816a7b52bf94d4aadd0ca07238154b-328713437.us-west-2.elb.amazonaws.com:2333/#/dashboard" target="_blank" class="primary-btn">Go to Chaos Mesh Dashboard</a>
+        <button class="secondary-btn" onclick="showPage('landingPage')">Back to Landing</button>
     </div>
 
     <div class="container" id="appPage" style="display: none;">
