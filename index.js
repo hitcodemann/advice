@@ -68,7 +68,7 @@ function analyzeImage() {
         })
         .then(response => {
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        return response.json();
+            return response.json();
         })
         .then(data => {
             let resultText = data.imageAnalysis || "No analysis result returned.";
@@ -157,10 +157,18 @@ function downloadPdf(type) {
 
 function showPage(pageId) {
     console.log("showPage called with:", pageId);
-    document.getElementById("homePage").style.display = "none";
+    // Hide all pages
+    document.getElementById("landingPage").style.display = "none";
+    document.getElementById("appPage").style.display = "none";
     document.getElementById("githubAnalysisPage").style.display = "none";
     document.getElementById("investmentPage").style.display = "none";
     document.getElementById("imageAnalysisPage").style.display = "none";
 
+    // Show the selected page
     document.getElementById(pageId).style.display = "block";
 }
+
+// Ensure landing page is visible on load
+document.addEventListener("DOMContentLoaded", function() {
+    showPage("landingPage");
+});
