@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Travelers AI Portal</title>
+    <title>GenAI Buddy</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="index.js" defer></script>
 </head>
 <body>
     <header>
-        <h1>Travelers AI Analysis Portal</h1>
-        <img src="umbrella.png" alt="Travelers Logo" class="logo">
+        <h1>GenAI Buddy</h1>
+        <img src="umbrella.png" alt="Logo" class="logo">
     </header>
 
     <div class="container" id="landingPage">
-        <h2>Welcome to Travelers AI Portal</h2>
+        <h2>Welcome to GenAI Buddy</h2>
         <button class="primary-btn" onclick="showPage('chaosMeshPage')">Chaos Mesh</button>
         <button class="primary-btn" onclick="showPage('appPage')">Enter AI Analysis App</button>
+        <button class="primary-btn" onclick="showPage('discoveryWizardPage')">Discovery Wizard</button>
     </div>
 
     <div class="container" id="chaosMeshPage" style="display: none;">
@@ -41,7 +42,7 @@
         <label for="analysisQuery">Enter Analysis Query:</label>
         <input type="text" id="analysisQuery" placeholder="E.g., Analyze for AWS Lambda compatibility">
         <button class="primary-btn" onclick="analyzeRepo()">Analyze</button>
-        <div id="githubLoading" class="loader" style="display: none;"></div> <!-- Loading Spinner -->
+        <div id="githubLoading" class="loader" style="display: none;"></div>
         <h3>Analysis Result:</h3>
         <p id="analysisResult"></p>
         <button id="downloadGithubPdf" class="secondary-btn" onclick="downloadPdf('github')" style="display: none;">Download PDF</button>
@@ -73,11 +74,45 @@
         <label for="imageAnalysisQuery">Enter Analysis Prompt:</label>
         <input type="text" id="imageAnalysisQuery" placeholder="E.g., Describe the network architecture in this image">
         <button class="primary-btn" onclick="analyzeImage()">Analyze Image</button>
-        <div id="imageLoading" class="loader" style="display: none;"></div> <!-- Loading Spinner -->
+        <div id="imageLoading" class="loader" style="display: none;"></div>
         <h3>Image Analysis Result:</h3>
         <p id="imageAnalysisResult"></p>
         <button id="downloadImagePdf" class="secondary-btn" onclick="downloadPdf('image')" style="display: none;">Download PDF</button>
         <button class="secondary-btn" onclick="showPage('appPage')">Back</button>
+    </div>
+
+    <div class="container" id="discoveryWizardPage" style="display: none;">
+        <h2>Discovery Wizard</h2>
+        <button class="primary-btn" onclick="showPage('discoverPage')">Discover</button>
+        <button class="primary-btn" onclick="showPage('migratePage')">Migrate</button>
+        <button class="secondary-btn" onclick="showPage('landingPage')">Back to Landing</button>
+    </div>
+
+    <div class="container" id="discoverPage" style="display: none;">
+        <h2>Discover</h2>
+        <label for="discoverGithubUrl">GitHub Repository URL:</label>
+        <input type="text" id="discoverGithubUrl" placeholder="Enter GitHub URL">
+        <button class="primary-btn" onclick="analyzeDiscover('codeQuality')">Code Quality</button>
+        <button class="primary-btn" onclick="analyzeDiscover('costEffort')">Cost and Effort Estimation</button>
+        <button class="primary-btn" onclick="analyzeDiscover('security')">Security and Vulnerability</button>
+        <button class="primary-btn" onclick="analyzeDiscover('technicalDebt')">Technical Debt</button>
+        <div id="discoverLoading" class="loader" style="display: none;"></div>
+        <h3>Analysis Result:</h3>
+        <p id="discoverResult"></p>
+        <button id="downloadDiscoverPdf" class="secondary-btn" onclick="downloadPdf('discover')" style="display: none;">Download PDF</button>
+        <button class="secondary-btn" onclick="showPage('discoveryWizardPage')">Back</button>
+    </div>
+
+    <div class="container" id="migratePage" style="display: none;">
+        <h2>Architecture Discovery</h2>
+        <label for="diagramUpload">Upload LLD/HLD Diagram:</label>
+        <input type="file" id="diagramUpload">
+        <button class="primary-btn" onclick="analyzeDiagram()">Discover</button>
+        <div id="diagramLoading" class="loader" style="display: none;"></div>
+        <h3>Analysis Result:</h3>
+        <p id="diagramResult"></p>
+        <button id="downloadDiagramPdf" class="secondary-btn" onclick="downloadPdf('diagram')" style="display: none;">Download PDF</button>
+        <button class="secondary-btn" onclick="showPage('discoveryWizardPage')">Back</button>
     </div>
 </body>
 </html>
