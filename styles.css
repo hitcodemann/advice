@@ -9,7 +9,7 @@ header {
     color: white;
     padding: 15px;
     font-size: 24px;
-    text-align: center; /* Keep header centered */
+    text-align: center;
 }
 
 .container {
@@ -19,7 +19,7 @@ header {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    text-align: left; /* Override body centering for container content */
+    text-align: left;
 }
 
 input, select {
@@ -70,32 +70,32 @@ input, select {
 }
 
 /* Specific styling for analysis results */
-#analysisResult, #imageAnalysisResult {
+#analysisResult, #imageAnalysisResult, #discoverResult, #diagramResult {
     margin-top: 10px;
-    text-align: left; /* Ensure left alignment */
-    font-family: monospace; /* Improves readability of structured text */
+    text-align: left;
+    font-family: monospace;
 }
 
-#analysisResult pre, #imageAnalysisResult pre {
+#analysisResult pre, #imageAnalysisResult pre, #discoverResult pre, #diagramResult pre {
     margin: 0;
     padding: 10px;
-    background-color: #f9f9f9; /* Light background for readability */
+    background-color: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 4px;
-    white-space: pre-wrap; /* Preserve line breaks and wrap text */
-    text-align: left; /* Reinforce left alignment */
+    white-space: pre-wrap;
+    text-align: left;
     font-size: 14px;
 }
 
 /* Loading Spinner Styles */
 .loader {
-    border: 4px solid #f3f3f3; /* Light grey */
-    border-top: 4px solid #cc0000; /* Matches primary button color */
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #cc0000;
     border-radius: 50%;
     width: 30px;
     height: 30px;
     animation: spin 1s linear infinite;
-    margin: 20px auto; /* Center the spinner */
+    margin: 20px auto;
 }
 
 @keyframes spin {
