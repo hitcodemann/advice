@@ -1,9 +1,101 @@
 function analyzeRepo() {
-    // Existing code remains unchanged
+    console.log("analyzeRepo clicked");
+    let githubUrl = document.getElementById("githubUrl").value;
+    let analysisQuery = document.getElementById("analysisQuery").value;
+    let loadingSpinner = document.getElementById("githubLoading");
+
+    if (!githubUrl || !analysisQuery) {
+        alert("Please enter both GitHub URL and an analysis request!");
+        return;
+    }
+
+    loadingSpinner.style.display = "block";
+    document.getElementById("analysisResult").innerHTML = "";
+
+    fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+            type: "github",
+            githubUrl: githubUrl, 
+            analysisQuery: analysisQuery 
+        }) 
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        return response.json();
+    })
+    .then(data => {
+        let resultText = data.analysis || "No result returned.";
+        document.getElementById("analysisResult").innerHTML = `<pre>${resultText}</pre>`;
+        document.getElementById("downloadGithubPdf").style.display = "block";
+        loadingSpinner.style.display = "none";
+    })
+    .catch(error => {
+        console.error("Error fetching analysis:", error);
+        document.getElementById("analysisResult").innerText = "Error fetching analysis: " + error.message;
+        loadingSpinner.style.display = "none";
+    });
 }
 
 function analyzeImage() {
-    // Existing code remains unchanged
+    console.log("analyzeImage clicked");
+    let imageUpload = document.getElementById("imageUpload").files[0];
+    let imageAnalysisQuery = document.getElementById("imageAnalysisQuery").value;
+    let loadingSpinner = document.getElementById("imageLoading");
+
+    if (!imageUpload) {
+        alert("Please upload an image!");
+        return;
+    }
+
+    if (!imageAnalysisQuery) {
+        alert("Please enter an analysis prompt!");
+        return;
+    }
+
+    loadingSpinner.style.display = "block";
+    document.getElementById("imageAnalysisResult").innerHTML = "";
+
+    let reader = new FileReader();
+    reader.readAsDataURL(imageUpload);
+    
+    reader.onload = function () {
+        let base64String = reader.result.split(",")[1];
+        let filename = imageUpload.name;
+
+        fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", { 
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+                type: "imageUpload",
+                filename: filename,
+                image: base64String,
+                analysisQuery: imageAnalysisQuery  
+            }) 
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            return response.json();
+        })
+        .then(data => {
+            let resultText = data.imageAnalysis || "No analysis result returned.";
+            document.getElementById("imageAnalysisResult").innerHTML = `<pre>${resultText}</pre>`;
+            document.getElementById("downloadImagePdf").style.display = "block";
+            loadingSpinner.style.display = "none";
+        })
+        .catch(error => {
+            console.error("Error fetching image analysis:", error);
+            document.getElementById("imageAnalysisResult").innerText = "Error fetching image analysis: " + error.message;
+            loadingSpinner.style.display = "none";
+        });
+    };
+
+    reader.onerror = function (error) {
+        console.error("Error converting image:", error);
+        alert("Failed to process image. Try again.");
+        loadingSpinner.style.display = "none";
+    };
 }
 
 function analyzeDiscover(category) {
@@ -132,7 +224,6 @@ function downloadPdf(type) {
     }
 
     if (type === "github") {
-        // Existing GitHub PDF logic
         let resultElement = document.getElementById("analysisResult").querySelector("pre");
         let resultText = resultElement ? resultElement.innerText : "No result available.";
         doc.text("GitHub Repository Analysis Result", 10, 10);
@@ -152,7 +243,6 @@ function downloadPdf(type) {
         });
         doc.save("GitHub_Analysis_Result.pdf");
     } else if (type === "image") {
-        // Existing Image PDF logic
         let resultElement = document.getElementById("imageAnalysisResult").querySelector("pre");
         let resultText = resultElement ? resultElement.innerText : "No result available.";
         doc.text("Image Analysis Result", 10, 10);
