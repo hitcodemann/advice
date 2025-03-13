@@ -145,6 +145,45 @@ function analyzeImage() {
     };
 }
 
+function invokeAgent() {
+    console.log("invokeAgent clicked");
+    let query = document.getElementById("agentQuery").value;
+    let loadingSpinner = document.getElementById("agentLoading");
+
+    if (!query) {
+        alert("Please enter a query!");
+        return;
+    }
+
+    loadingSpinner.style.display = "block";
+    document.getElementById("agentResult").innerHTML = "";
+
+    fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            type: "agent",
+            query: query
+        })
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        return response.json();
+    })
+    .then(data => {
+        let resultText = data.agentResponse || "No response returned.";
+        document.getElementById("agentResult").innerHTML = `<pre>${resultText}</pre>`;
+        document.getElementById("downloadAgentPdf").style.display = "block";
+    })
+    .catch(error => {
+        console.error("Error fetching agent response:", error);
+        document.getElementById("agentResult").innerText = "Error fetching response: " + error.message;
+    })
+    .finally(() => {
+        loadingSpinner.style.display = "none";
+    });
+}
+
 function analyzeDiscover(category) {
     console.log("analyzeDiscover clicked for:", category);
     let githubUrl = document.getElementById("discoverGithubUrl").value;
@@ -515,6 +554,21 @@ function downloadPdf(type) {
             else addTextWithIndent(trimmedLine, 0, 10);
         });
         doc.save("Chatbot_Analysis_Result.pdf");
+    } else if (type === "agent") {
+        let resultElement = document.getElementById("agentResult").querySelector("pre");
+        let resultText = resultElement ? resultElement.innerText : "No result available.";
+        doc.text("AWS Bedrock Agent Response", 10, 10);
+        yPosition = 20;
+
+        let lines = resultText.split("\n");
+        lines.forEach(line => {
+            let trimmedLine = line.trim();
+            if (!trimmedLine) { yPosition += lineHeight; return; }
+            if (trimmedLine.match(/^\d+\./)) addTextWithIndent(trimmedLine, 0, 10);
+            else if (trimmedLine.startsWith("-")) addTextWithIndent(trimmedLine, 1, 10);
+            else addTextWithIndent(trimmedLine, 0, 10);
+        });
+        doc.save("Agent_Response.pdf");
     }
 }
 
@@ -530,6 +584,7 @@ function showPage(pageId) {
     document.getElementById("discoveryWizardPage").style.display = "none";
     document.getElementById("discoverPage").style.display = "none";
     document.getElementById("migratePage").style.display = "none";
+    document.getElementById("agentPage").style.display = "none";
 
     document.getElementById(pageId).style.display = "block";
 }
