@@ -5,6 +5,30 @@ let chatbotState = {
     currentStep: "github"
 };
 
+// Core page navigation function with error handling
+function showPage(pageId) {
+    console.log("showPage called with:", pageId);
+    try {
+        const pages = [
+            "landingPage", "chaosMeshPage", "appPage", "githubAnalysisPage", 
+            "investmentPage", "imageAnalysisPage", "chatbotPage", 
+            "discoveryWizardPage", "discoverPage", "migratePage"
+        ];
+        
+        pages.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.style.display = id === pageId ? "block" : "none";
+            } else {
+                console.warn(`Element with ID '${id}' not found in DOM`);
+            }
+        });
+    } catch (error) {
+        console.error("Error in showPage:", error);
+        alert("An error occurred while navigating. Check the console for details.");
+    }
+}
+
 function analyzeRepo() {
     console.log("analyzeRepo clicked");
     let githubUrl = document.getElementById("githubUrl").value;
@@ -396,6 +420,7 @@ function analyzeChatbotInput() {
 }
 
 function resetChatbot() {
+    console.log("resetChatbot called");
     chatbotState = {
         githubUrl: null,
         questions: [],
@@ -410,6 +435,7 @@ function resetChatbot() {
 }
 
 function downloadPdf(type) {
+    console.log("downloadPdf called with type:", type);
     let { jsPDF } = window.jspdf;
     let doc = new jsPDF();
     let pageWidth = doc.internal.pageSize.getWidth() - 20;
@@ -441,106 +467,106 @@ function downloadPdf(type) {
     doc.setFont("Courier");
     doc.setFontSize(10);
 
-    if (type === "github") {
-        let resultElement = document.getElementById("analysisResult").querySelector("pre");
-        let resultText = resultElement ? resultElement.innerText : "No result available.";
-        doc.text("GitHub Repository Analysis Result", 10, 10);
-        yPosition = 20;
+    try {
+        if (type === "github") {
+            let resultElement = document.getElementById("analysisResult").querySelector("pre");
+            let resultText = resultElement ? resultElement.innerText : "No result available.";
+            doc.text("GitHub Repository Analysis Result", 10, 10);
+            yPosition = 20;
 
-        let lines = resultText.split("\n");
-        lines.forEach(line => {
-            let trimmedLine = line.trim();
-            if (!trimmedLine) { yPosition += lineHeight; return; }
-            if (line.match(/^\s*\+--/)) addTextWithIndent(line.replace("+--", "+--"), 1, 10);
-            else if (line.match(/^\s*\|.*`--/)) addTextWithIndent(line.replace("|   `--", "| `--"), 2, 10);
-            else if (line.match(/^\s*\|.*\+--/)) addTextWithIndent(line.replace("|   +--", "| +--"), 2, 10);
-            else if (trimmedLine.match(/^\d+\./)) addTextWithIndent(trimmedLine, 0, 10);
-            else if (trimmedLine.startsWith("-")) addTextWithIndent(trimmedLine, 1, 10);
-            else addTextWithIndent(trimmedLine, 0, 10);
-        });
-        doc.save("GitHub_Analysis_Result.pdf");
-    } else if (type === "image") {
-        let resultElement = document.getElementById("imageAnalysisResult").querySelector("pre");
-        let resultText = resultElement ? resultElement.innerText : "No result available.";
-        doc.text("Image Analysis Result", 10, 10);
-        yPosition = 20;
+            let lines = resultText.split("\n");
+            lines.forEach(line => {
+                let trimmedLine = line.trim();
+                if (!trimmedLine) { yPosition += lineHeight; return; }
+                if (line.match(/^\s*\+--/)) addTextWithIndent(line.replace("+--", "+--"), 1, 10);
+                else if (line.match(/^\s*\|.*`--/)) addTextWithIndent(line.replace("|   `--", "| `--"), 2, 10);
+                else if (line.match(/^\s*\|.*\+--/)) addTextWithIndent(line.replace("|   +--", "| +--"), 2, 10);
+                else if (trimmedLine.match(/^\d+\./)) addTextWithIndent(trimmedLine, 0, 10);
+                else if (trimmedLine.startsWith("-")) addTextWithIndent(trimmedLine, 1, 10);
+                else addTextWithIndent(trimmedLine, 0, 10);
+            });
+            doc.save("GitHub_Analysis_Result.pdf");
+        } else if (type === "image") {
+            let resultElement = document.getElementById("imageAnalysisResult").querySelector("pre");
+            let resultText = resultElement ? resultElement.innerText : "No result available.";
+            doc.text("Image Analysis Result", 10, 10);
+            yPosition = 20;
 
-        let lines = resultText.split("\n");
-        lines.forEach(line => {
-            let trimmedLine = line.trim();
-            if (!trimmedLine) { yPosition += lineHeight; return; }
-            if (trimmedLine.match(/^\d+\./)) addTextWithIndent(trimmedLine, 0, 10);
-            else if (trimmedLine.startsWith("-")) addTextWithIndent(trimmedLine, 1, 10);
-            else addTextWithIndent(trimmedLine, 0, 10);
-        });
-        doc.save("Image_Analysis_Result.pdf");
-    } else if (type === "discover") {
-        let resultElement = document.getElementById("discoverResult").querySelector("pre");
-        let resultText = resultElement ? resultElement.innerText : "No result available.";
-        doc.text("Discover Analysis Result", 10, 10);
-        yPosition = 20;
+            let lines = resultText.split("\n");
+            lines.forEach(line => {
+                let trimmedLine = line.trim();
+                if (!trimmedLine) { yPosition += lineHeight; return; }
+                if (trimmedLine.match(/^\d+\./)) addTextWithIndent(trimmedLine, 0, 10);
+                else if (trimmedLine.startsWith("-")) addTextWithIndent(trimmedLine, 1, 10);
+                else addTextWithIndent(trimmedLine, 0, 10);
+            });
+            doc.save("Image_Analysis_Result.pdf");
+        } else if (type === "discover") {
+            let resultElement = document.getElementById("discoverResult").querySelector("pre");
+            let resultText = resultElement ? resultElement.innerText : "No result available.";
+            doc.text("Discover Analysis Result", 10, 10);
+            yPosition = 20;
 
-        let lines = resultText.split("\n");
-        lines.forEach(line => {
-            let trimmedLine = line.trim();
-            if (!trimmedLine) { yPosition += lineHeight; return; }
-            if (trimmedLine.match(/^\d+\./)) addTextWithIndent(trimmedLine, 0, 10);
-            else if (trimmedLine.startsWith("-")) addTextWithIndent(trimmedLine, 1, 10);
-            else addTextWithIndent(trimmedLine, 0, 10);
-        });
-        doc.save("Discover_Analysis_Result.pdf");
-    } else if (type === "diagram") {
-        let resultElement = document.getElementById("diagramResult").querySelector("pre");
-        let resultText = resultElement ? resultElement.innerText : "No result available.";
-        doc.text("Architecture Discovery Result", 10, 10);
-        yPosition = 20;
+            let lines = resultText.split("\n");
+            lines.forEach(line => {
+                let trimmedLine = line.trim();
+                if (!trimmedLine) { yPosition += lineHeight; return; }
+                if (trimmedLine.match(/^\d+\./)) addTextWithIndent(trimmedLine, 0, 10);
+                else if (trimmedLine.startsWith("-")) addTextWithIndent(trimmedLine, 1, 10);
+                else addTextWithIndent(trimmedLine, 0, 10);
+            });
+            doc.save("Discover_Analysis_Result.pdf");
+        } else if (type === "diagram") {
+            let resultElement = document.getElementById("diagramResult").querySelector("pre");
+            let resultText = resultElement ? resultElement.innerText : "No result available.";
+            doc.text("Architecture Discovery Result", 10, 10);
+            yPosition = 20;
 
-        let lines = resultText.split("\n");
-        lines.forEach(line => {
-            let trimmedLine = line.trim();
-            if (!trimmedLine) { yPosition += lineHeight; return; }
-            if (line.match(/^\s*\+--/)) addTextWithIndent(line.replace("+--", "+--"), 1, 10);
-            else if (line.match(/^\s*\|.*`--/)) addTextWithIndent(line.replace("|   `--", "| `--"), 2, 10);
-            else if (line.match(/^\s*\|.*\+--/)) addTextWithIndent(line.replace("|   +--", "| +--"), 2, 10);
-            else if (trimmedLine.match(/^\d+\./)) addTextWithIndent(trimmedLine, 0, 10);
-            else if (trimmedLine.startsWith("-")) addTextWithIndent(trimmedLine, 1, 10);
-            else addTextWithIndent(trimmedLine, 0, 10);
-        });
-        doc.save("Architecture_Discovery_Result.pdf");
-    } else if (type === "chatbot") {
-        let resultElement = document.getElementById("chatbotResult").querySelector("pre");
-        let resultText = resultElement ? resultElement.innerText : "No result available.";
-        doc.text("Chatbot Analysis Result", 10, 10);
-        yPosition = 20;
+            let lines = resultText.split("\n");
+            lines.forEach(line => {
+                let trimmedLine = line.trim();
+                if (!trimmedLine) { yPosition += lineHeight; return; }
+                if (line.match(/^\s*\+--/)) addTextWithIndent(line.replace("+--", "+--"), 1, 10);
+                else if (line.match(/^\s*\|.*`--/)) addTextWithIndent(line.replace("|   `--", "| `--"), 2, 10);
+                else if (line.match(/^\s*\|.*\+--/)) addTextWithIndent(line.replace("|   +--", "| +--"), 2, 10);
+                else if (trimmedLine.match(/^\d+\./)) addTextWithIndent(trimmedLine, 0, 10);
+                else if (trimmedLine.startsWith("-")) addTextWithIndent(trimmedLine, 1, 10);
+                else addTextWithIndent(trimmedLine, 0, 10);
+            });
+            doc.save("Architecture_Discovery_Result.pdf");
+        } else if (type === "chatbot") {
+            let resultElement = document.getElementById("chatbotResult").querySelector("pre");
+            let resultText = resultElement ? resultElement.innerText : "No result available.";
+            doc.text("Chatbot Analysis Result", 10, 10);
+            yPosition = 20;
 
-        let lines = resultText.split("\n");
-        lines.forEach(line => {
-            let trimmedLine = line.trim();
-            if (!trimmedLine) { yPosition += lineHeight; return; }
-            if (trimmedLine.match(/^\d+\./)) addTextWithIndent(trimmedLine, 0, 10);
-            else if (trimmedLine.startsWith("-")) addTextWithIndent(trimmedLine, 1, 10);
-            else addTextWithIndent(trimmedLine, 0, 10);
-        });
-        doc.save("Chatbot_Analysis_Result.pdf");
+            let lines = resultText.split("\n");
+            lines.forEach(line => {
+                let trimmedLine = line.trim();
+                if (!trimmedLine) { yPosition += lineHeight; return; }
+                if (trimmedLine.match(/^\d+\./)) addTextWithIndent(trimmedLine, 0, 10);
+                else if (trimmedLine.startsWith("-")) addTextWithIndent(trimmedLine, 1, 10);
+                else addTextWithIndent(trimmedLine, 0, 10);
+            });
+            doc.save("Chatbot_Analysis_Result.pdf");
+        }
+    } catch (error) {
+        console.error("Error generating PDF:", error);
+        alert("Failed to generate PDF. Check the console for details.");
     }
 }
 
-function showPage(pageId) {
-    console.log("showPage called with:", pageId);
-    document.getElementById("landingPage").style.display = "none";
-    document.getElementById("chaosMeshPage").style.display = "none";
-    document.getElementById("appPage").style.display = "none";
-    document.getElementById("githubAnalysisPage").style.display = "none";
-    document.getElementById("investmentPage").style.display = "none";
-    document.getElementById("imageAnalysisPage").style.display = "none";
-    document.getElementById("chatbotPage").style.display = "none";
-    document.getElementById("discoveryWizardPage").style.display = "none";
-    document.getElementById("discoverPage").style.display = "none";
-    document.getElementById("migratePage").style.display = "none";
-
-    document.getElementById(pageId).style.display = "block";
-}
-
+// Ensure DOM is fully loaded before initializing
 document.addEventListener("DOMContentLoaded", function() {
+    console.log("DOM fully loaded");
     showPage("landingPage");
+
+    // Log all primary buttons to verify they exist
+    const buttons = document.querySelectorAll(".primary-btn");
+    buttons.forEach(button => {
+        console.log("Found button:", button.textContent);
+        button.addEventListener("click", () => {
+            console.log("Button clicked:", button.textContent);
+        });
+    });
 });
