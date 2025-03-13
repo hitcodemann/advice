@@ -167,16 +167,16 @@ function analyzeDiscover(category) {
     let analysisQuery;
     switch (category) {
         case "codeQuality":
-            analysisQuery = "Please explain the current code quality and maintainability about the GitHub repo. Suggest key points on how it could be better in terms of code quality.";
+            analysisQuery = `You are analyzing a GitHub repository for Travelers Corporation, a leading insurance company. Please explain the current code quality and maintainability of the repository at ${githubUrl}. Focus on aspects critical to Travelers, such as scalability for handling large claims datasets, readability for compliance audits, and modularity for integrating with insurance underwriting systems. Suggest key improvements tailored to Travelers' needs in the insurance domain.`;
             break;
         case "costEffort":
-            analysisQuery = "Analyze the GitHub repository and estimate the cost and effort required to refactor the application.";
+            analysisQuery = `Analyze the GitHub repository at ${githubUrl} for Travelers Corporation, an insurance company. Estimate the cost and effort required to refactor the application, considering Travelers' priorities: optimizing claims processing workflows, ensuring regulatory compliance (e.g., HIPAA, GDPR), and integrating with existing Travelers systems like policy management or actuarial models. Provide a breakdown in terms of developer hours and potential cost savings for Travelers.`;
             break;
         case "security":
-            analysisQuery = "Analyze the repo and identify potential security and vulnerability risks, such as exposed secrets, outdated libraries, or unsafe practices. Include file names and snippets with mitigation advice.";
+            analysisQuery = `Analyze the GitHub repository at ${githubUrl} for Travelers Corporation, an insurance provider. Identify potential security and vulnerability risks relevant to Travelers, such as exposed PII (Personally Identifiable Information) in claims data, outdated libraries affecting policy processing, or unsafe practices that could violate insurance regulations. Include file names, snippets, and mitigation advice tailored to Travelers' need for data privacy and regulatory compliance.`;
             break;
         case "technicalDebt":
-            analysisQuery = "Analyze the GitHub repository URL. I want to move the application to AWS Lambda. How much time and effort will it take?";
+            analysisQuery = `Analyze the GitHub repository at ${githubUrl} for Travelers Corporation. Travelers wants to migrate this application to AWS Lambda to enhance scalability for real-time claims processing and reduce operational costs. Assess the technical debt and estimate the time and effort (in weeks and developer hours) to refactor the application for AWS Lambda, considering Travelers' requirements for high availability, integration with insurance APIs, and compliance with industry standards.`;
             break;
         default:
             alert("Invalid category!");
