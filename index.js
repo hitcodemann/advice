@@ -302,7 +302,7 @@ function startChatbot() {
         }
         chatbotState.githubUrl = githubUrl;
         chatbotState.currentStep = "question";
-        chatbotMessage.innerText = "What specific area would you like to analyze in this repository? (e.g., 'How many days to migrate from Python to Java?')";
+        chatbotMessage.innerText = "What specific area would you like to analyze in this repository? (e.g., 'How many days to migrate to AWS Lambda for claims processing?' or 'What are the security risks for PII data?')";
         chatbotConversation.innerHTML = `
             <p id="chatbotMessage">${chatbotMessage.innerText}</p>
             <input type="text" id="chatbotQuestion" placeholder="Enter your question">
@@ -337,7 +337,7 @@ function continueChatbot(choice) {
     const chatbotMessage = document.getElementById("chatbotMessage");
 
     if (choice === "yes") {
-        chatbotMessage.innerText = "What additional area would you like to analyze?";
+        chatbotMessage.innerText = "What additional area would you like to analyze? (e.g., 'How to ensure GDPR compliance?' or 'Effort to integrate with policy systems?')";
         chatbotConversation.innerHTML = `
             <p id="chatbotMessage">${chatbotMessage.innerText}</p>
             <input type="text" id="chatbotQuestion" placeholder="Enter your question">
@@ -354,7 +354,14 @@ function analyzeChatbotInput() {
     loadingSpinner.style.display = "block";
     document.getElementById("chatbotResult").innerHTML = "";
 
-    const analysisQuery = `Analyze the GitHub repository at ${chatbotState.githubUrl}. Please provide detailed answers to the following questions:\n` +
+    const travelersContext = (
+        "This analysis is for Travelers Corporation, a leading insurance company. "
+        "Prioritize Travelers' operational needs, such as efficient claims processing, "
+        "policy management, regulatory compliance (e.g., HIPAA, GDPR), data security for customer PII, "
+        "and integration with Travelers' existing insurance systems. Provide detailed, actionable insights "
+        "specific to the insurance industry and Travelers' business goals."
+    );
+    const analysisQuery = `${travelersContext}\n\nAnalyze the GitHub repository at ${chatbotState.githubUrl}. Please provide detailed answers to the following questions:\n` +
         chatbotState.questions.map((q, i) => `${i + 1}. ${q}`).join("\n");
 
     fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", {
