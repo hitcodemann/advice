@@ -19,6 +19,7 @@
         <button class="primary-btn" onclick="showPage('chaosMeshPage')">Chaos Mesh</button>
         <button class="primary-btn" onclick="showPage('appPage')">Enter AI Analysis App</button>
         <button class="primary-btn" onclick="showPage('discoveryWizardPage')">Discovery Wizard</button>
+        <button class="primary-btn" onclick="showPage('agentPage')">AWS Bedrock Agent</button>
     </div>
 
     <div class="container" id="chaosMeshPage" style="display: none;">
@@ -128,6 +129,18 @@
         <p id="diagramResult"></p>
         <button id="downloadDiagramPdf" class="secondary-btn" onclick="downloadPdf('diagram')" style="display: none;">Download PDF</button>
         <button class="secondary-btn" onclick="showPage('discoveryWizardPage')">Back</button>
+    </div>
+
+    <div class="container" id="agentPage" style="display: none;">
+        <h2>AWS Bedrock Agent</h2>
+        <label for="agentQuery">Enter your query:</label>
+        <input type="text" id="agentQuery" placeholder="Ask anything...">
+        <button class="primary-btn" onclick="invokeAgent()">Ask Agent</button>
+        <div id="agentLoading" class="loader" style="display: none;"></div>
+        <h3>Agent Response:</h3>
+        <p id="agentResult"></p>
+        <button id="downloadAgentPdf" class="secondary-btn" onclick="downloadPdf('agent')" style="display: none;">Download PDF</button>
+        <button class="secondary-btn" onclick="showPage('landingPage')">Back to Landing</button>
     </div>
 </body>
 </html>
