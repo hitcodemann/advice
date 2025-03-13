@@ -70,13 +70,13 @@ input, select {
 }
 
 /* Specific styling for analysis results */
-#analysisResult, #imageAnalysisResult, #discoverResult, #diagramResult, #chatbotResult {
+#analysisResult, #imageAnalysisResult, #discoverResult, #diagramResult, #chatbotResult, #agentResult {
     margin-top: 10px;
     text-align: left;
     font-family: monospace;
 }
 
-#analysisResult pre, #imageAnalysisResult pre, #discoverResult pre, #diagramResult pre, #chatbotResult pre {
+#analysisResult pre, #imageAnalysisResult pre, #discoverResult pre, #diagramResult pre, #chatbotResult pre, #agentResult pre {
     margin: 0;
     padding: 10px;
     background-color: #f9f9f9;
