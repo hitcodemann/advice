@@ -70,13 +70,13 @@ input, select {
 }
 
 /* Specific styling for analysis results */
-#analysisResult, #imageAnalysisResult, #discoverResult, #diagramResult {
+#analysisResult, #imageAnalysisResult, #discoverResult, #diagramResult, #chatbotResult {
     margin-top: 10px;
     text-align: left;
     font-family: monospace;
 }
 
-#analysisResult pre, #imageAnalysisResult pre, #discoverResult pre, #diagramResult pre {
+#analysisResult pre, #imageAnalysisResult pre, #discoverResult pre, #diagramResult pre, #chatbotResult pre {
     margin: 0;
     padding: 10px;
     background-color: #f9f9f9;
@@ -85,6 +85,15 @@ input, select {
     white-space: pre-wrap;
     text-align: left;
     font-size: 14px;
+}
+
+/* Chatbot specific styling */
+#chatbotConversation {
+    margin-bottom: 20px;
+}
+
+#chatbotConversation input {
+    margin: 10px 0;
 }
 
 /* Loading Spinner Styles */
