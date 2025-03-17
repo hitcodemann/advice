@@ -7,6 +7,7 @@ let chatbotState = {
 
 // Agent chat state
 let agentChatHistory = [];
+let lastRepoAnalyzed = null;
 
 function analyzeRepo() {
     console.log("analyzeRepo clicked");
@@ -148,10 +149,10 @@ function analyzeImage() {
     };
 }
 
-function sendAgentMessage() {
-    console.log("sendAgentMessage clicked");
+function sendAgentMessage(suggestion = null) {
+    console.log("sendAgentMessage called with suggestion:", suggestion);
     const queryInput = document.getElementById("agentQuery");
-    const query = queryInput.value.trim();
+    const query = suggestion || queryInput.value.trim();
     const loadingSpinner = document.getElementById("agentLoading");
     const messagesContainer = document.getElementById("agentMessages");
 
@@ -164,9 +165,12 @@ function sendAgentMessage() {
     agentChatHistory.push({ role: "user", content: query });
     displayAgentMessages();
 
-    // Clear input and show loading spinner
-    queryInput.value = "";
+    // Clear input and suggestions, show typing indicator
+    if (!suggestion) queryInput.value = "";
+    clearSuggestions();
     loadingSpinner.style.display = "block";
+    agentChatHistory.push({ role: "agent", content: "Bot is typing...", isTyping: true });
+    displayAgentMessages();
 
     fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", {
         method: "POST",
@@ -181,13 +185,16 @@ function sendAgentMessage() {
         return response.json();
     })
     .then(data => {
+        // Remove typing indicator
+        agentChatHistory = agentChatHistory.filter(msg => !msg.isTyping);
         const resultText = data.agentResponse || "No response returned.";
-        // Add agent response to chat history
         agentChatHistory.push({ role: "agent", content: resultText });
         displayAgentMessages();
+        updateSuggestions(query, resultText);
     })
     .catch(error => {
         console.error("Error fetching agent response:", error);
+        agentChatHistory = agentChatHistory.filter(msg => !msg.isTyping);
         agentChatHistory.push({ role: "agent", content: "Error fetching response: " + error.message });
         displayAgentMessages();
     })
@@ -202,7 +209,7 @@ function displayAgentMessages() {
 
     agentChatHistory.forEach(message => {
         const messageDiv = document.createElement("div");
-        messageDiv.className = `chat-message ${message.role}`;
+        messageDiv.className = `chat-message ${message.role} ${message.isTyping ? 'typing' : ''}`;
         messageDiv.innerHTML = `<pre>${message.content}</pre>`;
         messagesContainer.appendChild(messageDiv);
     });
@@ -211,12 +218,45 @@ function displayAgentMessages() {
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
+function updateSuggestions(query, response) {
+    const suggestionsContainer = document.getElementById("agentSuggestions");
+    suggestionsContainer.innerHTML = "";
+
+    // Simple logic to determine dynamic suggestions
+    if (query.toLowerCase().includes("hi") || query.toLowerCase().includes("hello")) {
+        addSuggestion("Analyze a GitHub repository", "Can you analyze a GitHub repository for me?");
+        addSuggestion("Tell me about AWS Lambda", "What is AWS Lambda and how does it work?");
+    } else if (query.toLowerCase().includes("analyze") && query.includes("github.com")) {
+        lastRepoAnalyzed = query.match(/github\.com\/[^\s]+/)?.[0];
+        addSuggestion("Cost Estimation", `What is the exact cost estimation for ${lastRepoAnalyzed}?`);
+        addSuggestion("Code Quality", `How is the code quality of ${lastRepoAnalyzed}?`);
+        addSuggestion("Security Analysis", `Are there any security issues in ${lastRepoAnalyzed}?`);
+    } else if (response.toLowerCase().includes("cost")) {
+        addSuggestion("More Details", "Can you provide more details on the cost breakdown?");
+        addSuggestion("Effort Estimation", "How much effort would it take to implement this?");
+    }
+
+    function addSuggestion(label, query) {
+        const button = document.createElement("button");
+        button.className = "suggestion-btn";
+        button.innerText = label;
+        button.onclick = () => sendAgentMessage(query);
+        suggestionsContainer.appendChild(button);
+    }
+}
+
+function clearSuggestions() {
+    const suggestionsContainer = document.getElementById("agentSuggestions");
+    suggestionsContainer.innerHTML = "";
+}
+
 function resetAgentChat() {
     agentChatHistory = [];
+    lastRepoAnalyzed = null;
     const messagesContainer = document.getElementById("agentMessages");
-    if (messagesContainer) {
-        messagesContainer.innerHTML = "";
-    }
+    const suggestionsContainer = document.getElementById("agentSuggestions");
+    if (messagesContainer) messagesContainer.innerHTML = "";
+    if (suggestionsContainer) suggestionsContainer.innerHTML = "";
 }
 
 function analyzeDiscover(category) {
