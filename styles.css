@@ -70,13 +70,13 @@ input, select {
 }
 
 /* Specific styling for analysis results */
-#analysisResult, #imageAnalysisResult, #discoverResult, #diagramResult, #chatbotResult, #agentResult {
+#analysisResult, #imageAnalysisResult, #discoverResult, #diagramResult, #chatbotResult {
     margin-top: 10px;
     text-align: left;
     font-family: monospace;
 }
 
-#analysisResult pre, #imageAnalysisResult pre, #discoverResult pre, #diagramResult pre, #chatbotResult pre, #agentResult pre {
+#analysisResult pre, #imageAnalysisResult pre, #discoverResult pre, #diagramResult pre, #chatbotResult pre {
     margin: 0;
     padding: 10px;
     background-color: #f9f9f9;
@@ -110,4 +110,53 @@ input, select {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* Chat container styling */
+#agentChatContainer {
+    margin-bottom: 20px;
+}
+
+.chat-messages {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    margin-bottom: 10px;
+}
+
+.chat-message {
+    margin: 10px 0;
+    padding: 8px;
+    border-radius: 5px;
+    text-align: left;
+}
+
+.chat-message.user {
+    background-color: #ffe6e6;
+    margin-left: 20%;
+    text-align: right;
+}
+
+.chat-message.agent {
+    background-color: #e6f3ff;
+    margin-right: 20%;
+}
+
+.chat-message pre {
+    margin: 0;
+    white-space: pre-wrap;
+    font-size: 14px;
+    font-family: monospace;
+}
+
+.chat-input {
+    display: flex;
+    gap: 10px;
+}
+
+.chat-input input {
+    flex: 1;
 }
