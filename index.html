@@ -132,14 +132,17 @@
     </div>
 
     <div class="container" id="agentPage" style="display: none;">
-        <h2>AWS Bedrock Agent</h2>
-        <label for="agentQuery">Enter your query:</label>
-        <input type="text" id="agentQuery" placeholder="Ask anything...">
-        <button class="primary-btn" onclick="invokeAgent()">Ask Agent</button>
-        <div id="agentLoading" class="loader" style="display: none;"></div>
-        <h3>Agent Response:</h3>
-        <p id="agentResult"></p>
-        <button id="downloadAgentPdf" class="secondary-btn" onclick="downloadPdf('agent')" style="display: none;">Download PDF</button>
+        <h2>AWS Bedrock Agent Chat</h2>
+        <div id="agentChatContainer">
+            <div id="agentMessages" class="chat-messages">
+                <!-- Messages will be dynamically added here -->
+            </div>
+            <div class="chat-input">
+                <input type="text" id="agentQuery" placeholder="Ask anything..." />
+                <button class="primary-btn" onclick="sendAgentMessage()">Send</button>
+            </div>
+            <div id="agentLoading" class="loader" style="display: none;"></div>
+        </div>
         <button class="secondary-btn" onclick="showPage('landingPage')">Back to Landing</button>
     </div>
 </body>
