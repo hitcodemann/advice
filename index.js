@@ -5,6 +5,9 @@ let chatbotState = {
     currentStep: "github"
 };
 
+// Agent chat state
+let agentChatHistory = [];
+
 function analyzeRepo() {
     console.log("analyzeRepo clicked");
     let githubUrl = document.getElementById("githubUrl").value;
@@ -145,18 +148,25 @@ function analyzeImage() {
     };
 }
 
-function invokeAgent() {
-    console.log("invokeAgent clicked");
-    let query = document.getElementById("agentQuery").value;
-    let loadingSpinner = document.getElementById("agentLoading");
+function sendAgentMessage() {
+    console.log("sendAgentMessage clicked");
+    const queryInput = document.getElementById("agentQuery");
+    const query = queryInput.value.trim();
+    const loadingSpinner = document.getElementById("agentLoading");
+    const messagesContainer = document.getElementById("agentMessages");
 
     if (!query) {
         alert("Please enter a query!");
         return;
     }
 
+    // Add user message to chat history and display it
+    agentChatHistory.push({ role: "user", content: query });
+    displayAgentMessages();
+
+    // Clear input and show loading spinner
+    queryInput.value = "";
     loadingSpinner.style.display = "block";
-    document.getElementById("agentResult").innerHTML = "";
 
     fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", {
         method: "POST",
@@ -171,17 +181,42 @@ function invokeAgent() {
         return response.json();
     })
     .then(data => {
-        let resultText = data.agentResponse || "No response returned.";
-        document.getElementById("agentResult").innerHTML = `<pre>${resultText}</pre>`;
-        document.getElementById("downloadAgentPdf").style.display = "block";
+        const resultText = data.agentResponse || "No response returned.";
+        // Add agent response to chat history
+        agentChatHistory.push({ role: "agent", content: resultText });
+        displayAgentMessages();
     })
     .catch(error => {
         console.error("Error fetching agent response:", error);
-        document.getElementById("agentResult").innerText = "Error fetching response: " + error.message;
+        agentChatHistory.push({ role: "agent", content: "Error fetching response: " + error.message });
+        displayAgentMessages();
     })
     .finally(() => {
         loadingSpinner.style.display = "none";
     });
+}
+
+function displayAgentMessages() {
+    const messagesContainer = document.getElementById("agentMessages");
+    messagesContainer.innerHTML = ""; // Clear existing messages
+
+    agentChatHistory.forEach(message => {
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `chat-message ${message.role}`;
+        messageDiv.innerHTML = `<pre>${message.content}</pre>`;
+        messagesContainer.appendChild(messageDiv);
+    });
+
+    // Scroll to the bottom of the chat
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function resetAgentChat() {
+    agentChatHistory = [];
+    const messagesContainer = document.getElementById("agentMessages");
+    if (messagesContainer) {
+        messagesContainer.innerHTML = "";
+    }
 }
 
 function analyzeDiscover(category) {
@@ -554,26 +589,14 @@ function downloadPdf(type) {
             else addTextWithIndent(trimmedLine, 0, 10);
         });
         doc.save("Chatbot_Analysis_Result.pdf");
-    } else if (type === "agent") {
-        let resultElement = document.getElementById("agentResult").querySelector("pre");
-        let resultText = resultElement ? resultElement.innerText : "No result available.";
-        doc.text("AWS Bedrock Agent Response", 10, 10);
-        yPosition = 20;
-
-        let lines = resultText.split("\n");
-        lines.forEach(line => {
-            let trimmedLine = line.trim();
-            if (!trimmedLine) { yPosition += lineHeight; return; }
-            if (trimmedLine.match(/^\d+\./)) addTextWithIndent(trimmedLine, 0, 10);
-            else if (trimmedLine.startsWith("-")) addTextWithIndent(trimmedLine, 1, 10);
-            else addTextWithIndent(trimmedLine, 0, 10);
-        });
-        doc.save("Agent_Response.pdf");
     }
 }
 
 function showPage(pageId) {
     console.log("showPage called with:", pageId);
+    if (pageId === "landingPage" && document.getElementById("agentPage").style.display === "block") {
+        resetAgentChat();
+    }
     document.getElementById("landingPage").style.display = "none";
     document.getElementById("chaosMeshPage").style.display = "none";
     document.getElementById("appPage").style.display = "none";
@@ -591,4 +614,12 @@ function showPage(pageId) {
 
 document.addEventListener("DOMContentLoaded", function() {
     showPage("landingPage");
+    const agentQueryInput = document.getElementById("agentQuery");
+    if (agentQueryInput) {
+        agentQueryInput.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                sendAgentMessage();
+            }
+        });
+    }
 });
