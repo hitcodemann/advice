@@ -145,6 +145,12 @@ input, select {
     margin-right: 20%;
 }
 
+.chat-message.typing {
+    color: #666;
+    font-style: italic;
+    background-color: #f0f0f0;
+}
+
 .chat-message pre {
     margin: 0;
     white-space: pre-wrap;
@@ -159,4 +165,25 @@ input, select {
 
 .chat-input input {
     flex: 1;
+}
+
+.suggestions {
+    margin: 10px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.suggestion-btn {
+    background-color: #f0f0f0;
+    color: #333;
+    padding: 8px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.suggestion-btn:hover {
+    background-color: #e0e0e0;
 }
