@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GenAI Buddy</title>
+    <title>GenAI Innovation</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="index.js" defer></script>
 </head>
 <body>
     <header>
-        <h1>GenAI Buddy</h1>
+        <h1>GenAI Innovation</h1>
         <img src="umbrella.png" alt="Logo" class="logo">
     </header>
 
     <div class="container" id="landingPage">
-        <h2>Welcome to GenAI Buddy</h2>
+        <h2>Explore our solutions</h2>
         <button class="primary-btn" onclick="showPage('chaosMeshPage')">Chaos Mesh</button>
         <button class="primary-btn" onclick="showPage('appPage')">Enter AI Analysis App</button>
         <button class="primary-btn" onclick="showPage('discoveryWizardPage')">Discovery Wizard</button>
@@ -50,8 +50,8 @@
     <div class="container" id="discoveryWizardPage" style="display: none;">
         <h2>Discovery Wizard</h2>
         <button class="primary-btn" onclick="showPage('discoverPage')">Discover</button>
-        <button class="primary-btn" onclick="showPage('migratePage')">Migrate</button>
-        <button class="primary-btn" onclick="showPage('agentPage')">AWS Bedrock Agent</button>
+        <button class="primary-btn" onclick="showPage('migratePage')">Validate</button>
+        <button class="primary-btn" onclick="showPage('agentPage')">TVA (Your Travelers's AI Architect)</button>
         <button class="secondary-btn" onclick="showPage('landingPage')">Back to Landing</button>
     </div>
 
@@ -71,7 +71,27 @@
     </div>
 
     <div class="container" id="migratePage" style="display: none;">
-        <h2>Architecture Discovery</h2>
+        <h2>Architecture Reflection</h2>
+        <label for="migrateGithubUrl">GitHub Repository URL:</label>
+        <input type="text" id="migrateGithubUrl" placeholder="Enter GitHub URL">
+        <label for="currentCost">Current Project/Operating Cost ($):</label>
+        <input type="number" id="currentCost" placeholder="Enter current cost">
+        <label for="migrationBudget">Migration Budget ($):</label>
+        <input type="number" id="migrationBudget" placeholder="Enter migration budget">
+        <label for="timeFrame">Time Frame (Months):</label>
+        <input type="number" id="timeFrame" placeholder="Enter time frame">
+        <label for="currentCloud">Current Cloud Platform:</label>
+        <select id="currentCloud">
+            <option value="aws">AWS</option>
+            <option value="gcp">GCP</option>
+            <option value="azure">Azure</option>
+        </select>
+        <label for="futureState">Future State:</label>
+        <select id="futureState">
+            <option value="aws">AWS</option>
+            <option value="azure">Azure</option>
+            <option value="gcp">GCP</option>
+        </select>
         <label for="diagramUpload">Upload LLD/HLD Diagram:</label>
         <input type="file" id="diagramUpload">
         <button class="primary-btn" onclick="analyzeDiagram()">Discover</button>
@@ -83,7 +103,7 @@
     </div>
 
     <div class="container" id="agentPage" style="display: none;">
-        <h2>AWS Bedrock Agent Chat</h2>
+        <h2>TVA (Your Travelers's AI Architect)</h2>
         <div id="agentChatContainer">
             <div id="agentMessages" class="chat-messages">
                 <!-- Messages will be dynamically added here -->
