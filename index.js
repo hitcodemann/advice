@@ -139,18 +139,18 @@ function updateSuggestions(query, response) {
     const suggestionsContainer = document.getElementById("agentSuggestions");
     suggestionsContainer.innerHTML = "";
 
-    // Simple logic to determine dynamic suggestions
+    // Logic to determine dynamic suggestions
     if (query.toLowerCase().includes("hi") || query.toLowerCase().includes("hello")) {
         addSuggestion("Analyze a GitHub repository", "Can you analyze a GitHub repository for me?");
         addSuggestion("Tell me about AWS Lambda", "What is AWS Lambda and how does it work?");
     } else if (query.toLowerCase().includes("analyze") && query.includes("github.com")) {
         lastRepoAnalyzed = query.match(/github\.com\/[^\s]+/)?.[0];
+        // Show all GitHub-related suggestions at once
         addSuggestion("Cost Estimation", `What is the exact cost estimation for ${lastRepoAnalyzed}?`);
         addSuggestion("Code Quality", `How is the code quality of ${lastRepoAnalyzed}?`);
         addSuggestion("Security Analysis", `Are there any security issues in ${lastRepoAnalyzed}?`);
-    } else if (response.toLowerCase().includes("cost")) {
-        addSuggestion("More Details", "Can you provide more details on the cost breakdown?");
-        addSuggestion("Effort Estimation", "How much effort would it take to implement this?");
+        addSuggestion("Technical Debt", `What is the technical debt of ${lastRepoAnalyzed}?`);
+        addSuggestion("Migration Effort", `How long will it take to migrate ${lastRepoAnalyzed} to AWS Lambda?`);
     }
 
     function addSuggestion(label, query) {
@@ -256,11 +256,22 @@ function analyzeDiscover(category) {
 function analyzeDiagram() {
     console.log("analyzeDiagram clicked");
     let diagramUpload = document.getElementById("diagramUpload").files[0];
+    let githubUrl = document.getElementById("migrateGithubUrl").value;
+    let currentCost = document.getElementById("currentCost").value;
+    let migrationBudget = document.getElementById("migrationBudget").value;
+    let timeFrame = document.getElementById("timeFrame").value;
+    let currentCloud = document.getElementById("currentCloud").value;
+    let futureState = document.getElementById("futureState").value;
     let loadingSpinner = document.getElementById("diagramLoading");
     let discoverButton = document.querySelector("#migratePage .primary-btn");
 
     if (!diagramUpload) {
         alert("Please upload a diagram!");
+        return;
+    }
+
+    if (!githubUrl || !currentCost || !migrationBudget || !timeFrame || !currentCloud || !futureState) {
+        alert("Please fill in all fields!");
         return;
     }
 
@@ -277,6 +288,20 @@ function analyzeDiagram() {
         let base64String = reader.result.split(",")[1];
         let filename = diagramUpload.name;
 
+        const combinedQuery = `
+            Consider yourself as a software architect and answer accordingly. I have a 3-tier application hosted on ${currentCloud}. 
+            Here are the details:
+            - GitHub Repository URL: ${githubUrl}
+            - Current Project/Operating Cost: $${currentCost}
+            - Migration Budget: $${migrationBudget}
+            - Time Frame: ${timeFrame} months
+            - Current Cloud Platform: ${currentCloud}
+            - Future State: ${futureState}
+            Kindly analyze the attached diagram. I got a task to convert this application to Lambda on ${futureState}. 
+            Can you give me the architectural diagram of this app when using Lambda instead of EC2, adhering to all security best practices? 
+            I want the answer in this format: Architectural diagram, Components with short explanation, Challenges we may face.
+        `;
+
         fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -284,7 +309,7 @@ function analyzeDiagram() {
                 type: "imageUpload",
                 filename: filename,
                 image: base64String,
-                analysisQuery: "Consider yourself as a software architect and answer accordingly. I have a 3-tier application hosted on AWS. Kindly analyze the attached diagram. I got a task to convert this application to Lambda. Can you give me the architectural diagram of this app when using Lambda instead of EC2, adhering to all security best practices? I want the answer in this format: Architectural diagram, Components with short explanation, Challenges we may face."
+                analysisQuery: combinedQuery
             })
         })
         .then(response => {
@@ -384,7 +409,7 @@ function downloadPdf(type) {
     } else if (type === "diagram") {
         let resultElement = document.getElementById("diagramResult").querySelector("pre");
         let resultText = resultElement ? resultElement.innerText : "No result available.";
-        doc.text("Architecture Discovery Result", 10, 10);
+        doc.text("Architecture Reflection Result", 10, 10);
         yPosition = 20;
 
         let lines = resultText.split("\n");
@@ -398,7 +423,7 @@ function downloadPdf(type) {
             else if (trimmedLine.startsWith("-")) addTextWithIndent(trimmedLine, 1, 10);
             else addTextWithIndent(trimmedLine, 0, 10);
         });
-        doc.save("Architecture_Discovery_Result.pdf");
+        doc.save("Architecture_Reflection_Result.pdf");
     }
 }
 
