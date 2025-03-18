@@ -1,89 +1,6 @@
-// Chatbot state
-let chatbotState = {
-    githubUrl: null,
-    questions: [],
-    currentStep: "github"
-};
-
 // Agent chat state
 let agentChatHistory = [];
 let lastRepoAnalyzed = null;
-
-function analyzeRepo() {
-    console.log("analyzeRepo clicked");
-    let githubUrl = document.getElementById("githubUrl").value;
-    let analysisQuery = document.getElementById("analysisQuery").value;
-    let loadingSpinner = document.getElementById("githubLoading");
-
-    if (!githubUrl || !analysisQuery) {
-        alert("Please enter both GitHub URL and an analysis request!");
-        return;
-    }
-
-    loadingSpinner.style.display = "block";
-    document.getElementById("analysisResult").innerHTML = "";
-
-    fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", { 
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-            type: "github",
-            githubUrl: githubUrl, 
-            analysisQuery: analysisQuery 
-        }) 
-    })
-    .then(response => {
-        console.log("Fetch response received:", response.status);
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        return response.json();
-    })
-    .then(data => {
-        console.log("Fetch data received:", data);
-        let resultText = data.analysis || "No result returned.";
-        document.getElementById("analysisResult").innerHTML = `<pre>${resultText}</pre>`;
-        document.getElementById("downloadGithubPdf").style.display = "block";
-    })
-    .catch(error => {
-        console.error("Error fetching analysis:", error);
-        document.getElementById("analysisResult").innerText = "Error fetching analysis: " + error.message;
-    })
-    .finally(() => {
-        console.log("Fetch completed, hiding spinner");
-        loadingSpinner.style.display = "none";
-    });
-}
-
-function getInvestmentAdvice() {
-    console.log("getInvestmentAdvice clicked");
-    let name = document.getElementById("name").value;
-    let salary = document.getElementById("salary").value;
-    let investmentType = document.getElementById("investmentType").value;
-
-    if (!name || !salary || !investmentType) {
-        alert("Please enter name, salary, and investment type!");
-        return;
-    }
-
-    fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            type: "investment",
-            name: name,
-            salary: salary,
-            investmentType: investmentType
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        let resultText = data.investmentAdvice || "No advice returned.";
-        document.getElementById("investmentResult").innerHTML = `<pre>${resultText}</pre>`;
-    })
-    .catch(error => {
-        console.error("Error fetching investment advice:", error);
-        document.getElementById("investmentResult").innerText = "Error fetching advice: " + error.message;
-    });
-}
 
 function analyzeImage() {
     console.log("analyzeImage clicked");
@@ -402,120 +319,6 @@ function analyzeDiagram() {
     };
 }
 
-// Chatbot Functions
-function startChatbot() {
-    console.log("startChatbot called");
-    const chatbotConversation = document.getElementById("chatbotConversation");
-    const chatbotMessage = document.getElementById("chatbotMessage");
-
-    if (chatbotState.currentStep === "github") {
-        const githubUrl = document.getElementById("chatbotGithubUrl").value;
-        if (!githubUrl) {
-            alert("Please enter a GitHub URL!");
-            return;
-        }
-        chatbotState.githubUrl = githubUrl;
-        chatbotState.currentStep = "question";
-        chatbotMessage.innerText = "What specific area would you like to analyze in this repository? (e.g., 'How many days to migrate from Python to Java?')";
-        chatbotConversation.innerHTML = `
-            <p id="chatbotMessage">${chatbotMessage.innerText}</p>
-            <input type="text" id="chatbotQuestion" placeholder="Enter your question">
-            <button class="primary-btn" onclick="addChatbotQuestion()">Submit</button>
-        `;
-    }
-}
-
-function addChatbotQuestion() {
-    console.log("addChatbotQuestion called");
-    const question = document.getElementById("chatbotQuestion").value;
-    const chatbotConversation = document.getElementById("chatbotConversation");
-    const chatbotMessage = document.getElementById("chatbotMessage");
-
-    if (!question) {
-        alert("Please enter a question!");
-        return;
-    }
-
-    chatbotState.questions.push(question);
-    chatbotMessage.innerText = `You asked: "${question}". Would you like to add another question?`;
-    chatbotConversation.innerHTML = `
-        <p id="chatbotMessage">${chatbotMessage.innerText}</p>
-        <button class="primary-btn" onclick="continueChatbot('yes')">Yes</button>
-        <button class="primary-btn" onclick="continueChatbot('no')">No, Analyze Now</button>
-    `;
-}
-
-function continueChatbot(choice) {
-    console.log("continueChatbot called with:", choice);
-    const chatbotConversation = document.getElementById("chatbotConversation");
-    const chatbotMessage = document.getElementById("chatbotMessage");
-
-    if (choice === "yes") {
-        chatbotMessage.innerText = "What additional area would you like to analyze?";
-        chatbotConversation.innerHTML = `
-            <p id="chatbotMessage">${chatbotMessage.innerText}</p>
-            <input type="text" id="chatbotQuestion" placeholder="Enter your question">
-            <button class="primary-btn" onclick="addChatbotQuestion()">Submit</button>
-        `;
-    } else if (choice === "no") {
-        analyzeChatbotInput();
-    }
-}
-
-function analyzeChatbotInput() {
-    console.log("analyzeChatbotInput called");
-    const loadingSpinner = document.getElementById("chatbotLoading");
-    loadingSpinner.style.display = "block";
-    document.getElementById("chatbotResult").innerHTML = "";
-
-    const analysisQuery = `Analyze the GitHub repository at ${chatbotState.githubUrl}. Please provide detailed answers to the following questions:\n` +
-        chatbotState.questions.map((q, i) => `${i + 1}. ${q}`).join("\n");
-
-    fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            type: "github",
-            githubUrl: chatbotState.githubUrl,
-            analysisQuery: analysisQuery
-        })
-    })
-    .then(response => {
-        console.log("Fetch response received:", response.status);
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        return response.json();
-    })
-    .then(data => {
-        console.log("Fetch data received:", data);
-        const resultText = data.analysis || "No result returned.";
-        document.getElementById("chatbotResult").innerHTML = `<pre>${resultText}</pre>`;
-        document.getElementById("downloadChatbotPdf").style.display = "block";
-        resetChatbot();
-    })
-    .catch(error => {
-        console.error("Error fetching chatbot analysis:", error);
-        document.getElementById("chatbotResult").innerText = "Error fetching analysis: " + error.message;
-    })
-    .finally(() => {
-        console.log("Fetch completed, hiding spinner");
-        loadingSpinner.style.display = "none";
-    });
-}
-
-function resetChatbot() {
-    chatbotState = {
-        githubUrl: null,
-        questions: [],
-        currentStep: "github"
-    };
-    const chatbotConversation = document.getElementById("chatbotConversation");
-    chatbotConversation.innerHTML = `
-        <p id="chatbotMessage">Please enter the GitHub repository URL to begin:</p>
-        <input type="text" id="chatbotGithubUrl" placeholder="Enter GitHub URL">
-        <button class="primary-btn" onclick="startChatbot()">Submit</button>
-    `;
-}
-
 function downloadPdf(type) {
     let { jsPDF } = window.jspdf;
     let doc = new jsPDF();
@@ -548,25 +351,7 @@ function downloadPdf(type) {
     doc.setFont("Courier");
     doc.setFontSize(10);
 
-    if (type === "github") {
-        let resultElement = document.getElementById("analysisResult").querySelector("pre");
-        let resultText = resultElement ? resultElement.innerText : "No result available.";
-        doc.text("GitHub Repository Analysis Result", 10, 10);
-        yPosition = 20;
-
-        let lines = resultText.split("\n");
-        lines.forEach(line => {
-            let trimmedLine = line.trim();
-            if (!trimmedLine) { yPosition += lineHeight; return; }
-            if (line.match(/^\s*\+--/)) addTextWithIndent(line.replace("+--", "+--"), 1, 10);
-            else if (line.match(/^\s*\|.*`--/)) addTextWithIndent(line.replace("|   `--", "| `--"), 2, 10);
-            else if (line.match(/^\s*\|.*\+--/)) addTextWithIndent(line.replace("|   +--", "| +--"), 2, 10);
-            else if (trimmedLine.match(/^\d+\./)) addTextWithIndent(trimmedLine, 0, 10);
-            else if (trimmedLine.startsWith("-")) addTextWithIndent(trimmedLine, 1, 10);
-            else addTextWithIndent(trimmedLine, 0, 10);
-        });
-        doc.save("GitHub_Analysis_Result.pdf");
-    } else if (type === "image") {
+    if (type === "image") {
         let resultElement = document.getElementById("imageAnalysisResult").querySelector("pre");
         let resultText = resultElement ? resultElement.innerText : "No result available.";
         doc.text("Image Analysis Result", 10, 10);
@@ -614,21 +399,6 @@ function downloadPdf(type) {
             else addTextWithIndent(trimmedLine, 0, 10);
         });
         doc.save("Architecture_Discovery_Result.pdf");
-    } else if (type === "chatbot") {
-        let resultElement = document.getElementById("chatbotResult").querySelector("pre");
-        let resultText = resultElement ? resultElement.innerText : "No result available.";
-        doc.text("Chatbot Analysis Result", 10, 10);
-        yPosition = 20;
-
-        let lines = resultText.split("\n");
-        lines.forEach(line => {
-            let trimmedLine = line.trim();
-            if (!trimmedLine) { yPosition += lineHeight; return; }
-            if (trimmedLine.match(/^\d+\./)) addTextWithIndent(trimmedLine, 0, 10);
-            else if (trimmedLine.startsWith("-")) addTextWithIndent(trimmedLine, 1, 10);
-            else addTextWithIndent(trimmedLine, 0, 10);
-        });
-        doc.save("Chatbot_Analysis_Result.pdf");
     }
 }
 
@@ -640,10 +410,7 @@ function showPage(pageId) {
     document.getElementById("landingPage").style.display = "none";
     document.getElementById("chaosMeshPage").style.display = "none";
     document.getElementById("appPage").style.display = "none";
-    document.getElementById("githubAnalysisPage").style.display = "none";
-    document.getElementById("investmentPage").style.display = "none";
     document.getElementById("imageAnalysisPage").style.display = "none";
-    document.getElementById("chatbotPage").style.display = "none";
     document.getElementById("discoveryWizardPage").style.display = "none";
     document.getElementById("discoverPage").style.display = "none";
     document.getElementById("migratePage").style.display = "none";
