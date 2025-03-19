@@ -76,37 +76,32 @@ function updateSuggestions(query, response) {
     const suggestionsContainer = document.getElementById("agentSuggestions");
     suggestionsContainer.innerHTML = "";
 
-    // Extract GitHub URL from query if present
-    const githubMatch = query.match(/github\.com\/[^\s]+/);
-    if (githubMatch) {
-        lastRepoAnalyzed = githubMatch[0];
+    // Set lastRepoAnalyzed only if the query contains "analyze" and a GitHub URL, and response is successful
+    if (query.toLowerCase().includes("analyze") && query.includes("github.com") && !response.startsWith("Error")) {
+        lastRepoAnalyzed = query.match(/github\.com\/[^\s]+/)?.[0] || lastRepoAnalyzed;
     }
 
-    // Simple logic to determine dynamic suggestions
-    if (query.toLowerCase().includes("hi") || query.toLowerCase().includes("hello")) {
-        addSuggestion("Analyze a GitHub repository", "Can you analyze a GitHub repository for me?", "Analyzing repository");
-    } 
-    // Always show these suggestions if a GitHub repo has been analyzed
+    // Show suggestions only if a GitHub repo has been successfully analyzed
     if (lastRepoAnalyzed) {
         addSuggestion(
-            "Code Quality", 
-            `Analyze the repository at ${lastRepoAnalyzed} and evaluate code quality. Focus on readability, modularity, and standards adherence, providing examples with file names and improvement suggestions.`, 
-            "Analyzing code quality"
+            "Code Quality",
+            `Analyze the repository at ${lastRepoAnalyzed} and evaluate code quality. Focus on readability, modularity, and standards adherence, providing examples with file names and improvement suggestions.`,
+            "Evaluating code quality"
         );
         addSuggestion(
-            "Vulnerability Analysis", 
-            `Analyze the GitHub repository at ${lastRepoAnalyzed} and identify potential security and vulnerability risks, such as exposed secrets, outdated libraries, or unsafe practices. Must adhere to OWASP standards. Include file names and snippets with mitigation advice.`, 
-            "Analyzing existing vulnerabilities"
+            "Vulnerability Analysis",
+            `Analyze the GitHub repository at ${lastRepoAnalyzed} and identify potential security and vulnerability risks, such as exposed secrets, outdated libraries, or unsafe practices. Must adhere to OWASP standards. Include file names and snippets with mitigation advice.`,
+            "Checking for vulnerabilities"
         );
         addSuggestion(
-            "Technical Debt", 
-            `Identify the technical debts in ${lastRepoAnalyzed}, such as shortcuts, outdated dependencies, or poorly structured code that could increase future maintenance costs. Provide specific examples with file names and code snippets, explaining why they represent technical debt.`, 
-            "Analyzing technical debt"
+            "Technical Debt",
+            `Identify the technical debts in ${lastRepoAnalyzed}, such as shortcuts, outdated dependencies, or poorly structured code that could increase future maintenance costs. Provide specific examples with file names and code snippets, explaining why they represent technical debt.`,
+            "Assessing technical debt"
         );
         addSuggestion(
-            "Code Refactoring", 
-            `Identify areas in ${lastRepoAnalyzed} where automation or refactoring could reduce development costs.`, 
-            "Analyzing code refactoring"
+            "Code Refactoring",
+            `Identify areas in ${lastRepoAnalyzed} where automation or refactoring could reduce development costs.`,
+            "Exploring refactoring opportunities"
         );
     }
 
