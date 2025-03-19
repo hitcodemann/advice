@@ -17,7 +17,6 @@
     <div class="container" id="landingPage">
         <h2>Explore our solutions</h2>
         <button class="primary-btn" onclick="showPage('chaosMeshPage')">Chaos Mesh</button>
-        <button class="primary-btn" onclick="showPage('appPage')">Enter AI Analysis App</button>
         <button class="primary-btn" onclick="showPage('discoveryWizardPage')">Discovery Wizard</button>
     </div>
 
@@ -27,47 +26,11 @@
         <button class="secondary-btn" onclick="showPage('landingPage')">Back to Landing</button>
     </div>
 
-    <div class="container" id="appPage" style="display: none;">
-        <h2>AI Analysis Tools</h2>
-        <button class="primary-btn" onclick="showPage('imageAnalysisPage')">Image Upload & Analysis</button>
-        <button class="secondary-btn" onclick="showPage('landingPage')">Back to Landing</button>
-    </div>
-
-    <div class="container" id="imageAnalysisPage" style="display: none;">
-        <h2>Image Upload & Analysis</h2>
-        <label for="imageUpload">Upload Image:</label>
-        <input type="file" id="imageUpload">
-        <label for="imageAnalysisQuery">Enter Analysis Prompt:</label>
-        <input type="text" id="imageAnalysisQuery" placeholder="E.g., Describe the network architecture in this image">
-        <button class="primary-btn" onclick="analyzeImage()">Analyze Image</button>
-        <div id="imageLoading" class="loader" style="display: none;"></div>
-        <h3>Image Analysis Result:</h3>
-        <p id="imageAnalysisResult"></p>
-        <button id="downloadImagePdf" class="secondary-btn" onclick="downloadPdf('image')" style="display: none;">Download PDF</button>
-        <button class="secondary-btn" onclick="showPage('appPage')">Back</button>
-    </div>
-
     <div class="container" id="discoveryWizardPage" style="display: none;">
         <h2>Discovery Wizard</h2>
-        <button class="primary-btn" onclick="showPage('discoverPage')">Discover</button>
         <button class="primary-btn" onclick="showPage('migratePage')">Validate</button>
         <button class="primary-btn" onclick="showPage('agentPage')">TVA (Your Travelers's AI Architect)</button>
         <button class="secondary-btn" onclick="showPage('landingPage')">Back to Landing</button>
-    </div>
-
-    <div class="container" id="discoverPage" style="display: none;">
-        <h2>Discover</h2>
-        <label for="discoverGithubUrl">GitHub Repository URL:</label>
-        <input type="text" id="discoverGithubUrl" placeholder="Enter GitHub URL">
-        <button class="primary-btn" onclick="analyzeDiscover('codeQuality')">Code Quality</button>
-        <button class="primary-btn" onclick="analyzeDiscover('costEffort')">Cost and Effort Estimation</button>
-        <button class="primary-btn" onclick="analyzeDiscover('security')">Security and Vulnerability</button>
-        <button class="primary-btn" onclick="analyzeDiscover('technicalDebt')">Technical Debt</button>
-        <div id="discoverLoading" class="loader" style="display: none;"></div>
-        <h3>Analysis Result:</h3>
-        <p id="discoverResult"></p>
-        <button id="downloadDiscoverPdf" class="secondary-btn" onclick="downloadPdf('discover')" style="display: none;">Download PDF</button>
-        <button class="secondary-btn" onclick="showPage('discoveryWizardPage')">Back</button>
     </div>
 
     <div class="container" id="migratePage" style="display: none;">
@@ -81,11 +44,7 @@
         <label for="timeFrame">Time Frame (Months):</label>
         <input type="number" id="timeFrame" placeholder="Enter time frame">
         <label for="currentCloud">Current Cloud Platform:</label>
-        <select id="currentCloud">
-            <option value="aws">AWS</option>
-            <option value="gcp">GCP</option>
-            <option value="azure">Azure</option>
-        </select>
+        <input type="text" id="currentCloud" placeholder="Enter current cloud platform (e.g., AWS, GCP, Azure, On-Premises)">
         <label for="futureState">Future State:</label>
         <select id="futureState">
             <option value="aws">AWS</option>
