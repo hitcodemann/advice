@@ -14,12 +14,10 @@ function sendAgentMessage(suggestion = null, displayText = null) {
         return;
     }
 
-    // Use displayText for suggestions, otherwise use the raw query
     const chatDisplayText = displayText || query;
     agentChatHistory.push({ role: "user", content: chatDisplayText });
     displayAgentMessages();
 
-    // Clear input and suggestions, show typing indicator
     if (!suggestion) queryInput.value = "";
     clearSuggestions();
     loadingSpinner.style.display = "block";
@@ -31,7 +29,7 @@ function sendAgentMessage(suggestion = null, displayText = null) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             type: "agent",
-            query: query // Send the full prompt to the backend
+            query: query
         })
     })
     .then(response => {
@@ -39,7 +37,6 @@ function sendAgentMessage(suggestion = null, displayText = null) {
         return response.json();
     })
     .then(data => {
-        // Remove typing indicator
         agentChatHistory = agentChatHistory.filter(msg => !msg.isTyping);
         const resultText = data.agentResponse || "No response returned.";
         agentChatHistory.push({ role: "agent", content: resultText });
@@ -49,7 +46,10 @@ function sendAgentMessage(suggestion = null, displayText = null) {
     .catch(error => {
         console.error("Error fetching agent response:", error);
         agentChatHistory = agentChatHistory.filter(msg => !msg.isTyping);
-        agentChatHistory.push({ role: "agent", content: "Error fetching response: " + error.message });
+        agentChatHistory.push({ 
+            role: "agent", 
+            content: `Sorry, I couldn’t process your request due to a timeout or server issue (${error.message}). Please try again or simplify your query.` 
+        });
         displayAgentMessages();
     })
     .finally(() => {
@@ -59,16 +59,13 @@ function sendAgentMessage(suggestion = null, displayText = null) {
 
 function displayAgentMessages() {
     const messagesContainer = document.getElementById("agentMessages");
-    messagesContainer.innerHTML = ""; // Clear existing messages
-
+    messagesContainer.innerHTML = "";
     agentChatHistory.forEach(message => {
         const messageDiv = document.createElement("div");
         messageDiv.className = `chat-message ${message.role} ${message.isTyping ? 'typing' : ''}`;
         messageDiv.innerHTML = `<pre>${message.content}</pre>`;
         messagesContainer.appendChild(messageDiv);
     });
-
-    // Scroll to the bottom of the chat
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
@@ -76,12 +73,10 @@ function updateSuggestions(query, response) {
     const suggestionsContainer = document.getElementById("agentSuggestions");
     suggestionsContainer.innerHTML = "";
 
-    // Set lastRepoAnalyzed only if the query contains "analyze" and a GitHub URL, and response is successful
-    if (query.toLowerCase().includes("analyze") && query.includes("github.com") && !response.startsWith("Error")) {
+    if (query.toLowerCase().includes("analyze") && query.includes("github.com") && !response.includes("timeout") && !response.includes("Error")) {
         lastRepoAnalyzed = query.match(/github\.com\/[^\s]+/)?.[0] || lastRepoAnalyzed;
     }
 
-    // Show suggestions only if a GitHub repo has been successfully analyzed
     if (lastRepoAnalyzed) {
         addSuggestion(
             "Code Quality",
@@ -109,7 +104,7 @@ function updateSuggestions(query, response) {
         const button = document.createElement("button");
         button.className = "suggestion-btn";
         button.innerText = label;
-        button.onclick = () => sendAgentMessage(query, displayText); // Pass displayText to sendAgentMessage
+        button.onclick = () => sendAgentMessage(query, displayText);
         suggestionsContainer.appendChild(button);
     }
 }
@@ -151,7 +146,6 @@ function analyzeDiagram() {
     loadingSpinner.style.display = "block";
     document.getElementById("diagramResult").innerHTML = "";
 
-    // If no diagram is uploaded, proceed with "Not provided" for HLD/LLD
     if (!diagramUpload) {
         const combinedQuery = `
             You are a Solution Architect at a reputed insurance company. Your task is to analyze the given GitHub repository and accompanying architecture diagrams (HLD/LLD) to determine whether the application can be migrated to the target cloud platform within the specified budget and timeframe. Additionally, estimate costs based on the provided rate chart.
