@@ -145,12 +145,14 @@ function updateSuggestions(query, response) {
         addSuggestion("Analyze a GitHub repository", "Can you analyze a GitHub repository for me?", "Analyzing repository");
     } else if (query.toLowerCase().includes("analyze") && query.includes("github.com")) {
         lastRepoAnalyzed = query.match(/github\.com\/[^\s]+/)?.[0];
+        addSuggestion("Cost Estimation", `What is the exact cost estimation for ${lastRepoAnalyzed}?`, "Analyzing cost estimation");
         addSuggestion("Code Quality", `Analyze the repository at ${lastRepoAnalyzed} and evaluate code quality. Focus on readability, modularity, and standards adherence, providing examples with file names and improvement suggestions.`, "Analyzing code quality");
-        addSuggestion("Vulnerability Analysis", `Analyze the GitHub repository at ${lastRepoAnalyzed} and identify potential security and vulnerability risks, such as exposed secrets, outdated libraries, or unsafe practices. Must adhere to OWASP standards. Include file names and snippets with mitigation advice.`, "Analyzing security");
+        addSuggestion("Security Analysis", `Analyze the GitHub repository at ${lastRepoAnalyzed} and identify potential security and vulnerability risks, such as exposed secrets, outdated libraries, or unsafe practices. Must adhere to OWASP standards. Include file names and snippets with mitigation advice.`, "Analyzing security");
         addSuggestion("Technical Debt", `Identify the technical debts in ${lastRepoAnalyzed}, such as shortcuts, outdated dependencies, or poorly structured code that could increase future maintenance costs. Provide specific examples with file names and code snippets, explaining why they represent technical debt.`, "Analyzing technical debt");
         addSuggestion("Code Refactoring", `Identify areas in ${lastRepoAnalyzed} where automation or refactoring could reduce development costs.`, "Analyzing code refactoring");
     } else if (response.toLowerCase().includes("cost")) {
-        addSuggestion("More Details", "Can you tell me what all i can ask you?", "Tell me more!!");
+        addSuggestion("More Details", "Can you provide more details on the cost breakdown?", "Requesting more cost details");
+        addSuggestion("Effort Estimation", "How much effort would it take to implement this?", "Analyzing effort estimation");
     }
 
     function addSuggestion(label, query, displayText) {
@@ -174,83 +176,6 @@ function resetAgentChat() {
     const suggestionsContainer = document.getElementById("agentSuggestions");
     if (messagesContainer) messagesContainer.innerHTML = "";
     if (suggestionsContainer) suggestionsContainer.innerHTML = "";
-}
-
-function analyzeDiscover(category) {
-    console.log("analyzeDiscover clicked for:", category);
-    let githubUrl = document.getElementById("discoverGithubUrl").value;
-    let loadingSpinner = document.getElementById("discoverLoading");
-    let analyzeButtons = document.querySelectorAll("#discoverPage .primary-btn");
-
-    if (!githubUrl) {
-        alert("Please enter a GitHub URL!");
-        return;
-    }
-
-    console.log("Disabling buttons and showing spinner");
-    analyzeButtons.forEach(button => {
-        button.disabled = true;
-        button.style.opacity = "0.5";
-    });
-    loadingSpinner.style.display = "block";
-    document.getElementById("discoverResult").innerHTML = "";
-
-    let analysisQuery;
-    switch (category) {
-        case "codeQuality":
-            analysisQuery = `You are analyzing a GitHub repository for Travelers Corporation, a leading insurance company. Please explain the current code quality and maintainability of the repository at ${githubUrl}. Focus on aspects critical to Travelers, such as scalability for handling large claims datasets, readability for compliance audits, and modularity for integrating with insurance underwriting systems. Suggest key improvements tailored to Travelers' needs in the insurance domain.`;
-            break;
-        case "costEffort":
-            analysisQuery = `Analyze the GitHub repository at ${githubUrl} for Travelers Corporation, an insurance company. Estimate the cost and effort required to refactor the application, considering Travelers' priorities: optimizing claims processing workflows, ensuring regulatory compliance (e.g., HIPAA, GDPR), and integrating with existing Travelers systems like policy management or actuarial models. Provide a breakdown in terms of developer hours and potential cost savings for Travelers.`;
-            break;
-        case "security":
-            analysisQuery = `Analyze the GitHub repository at ${githubUrl} for Travelers Corporation, an insurance provider. Identify potential security and vulnerability risks relevant to Travelers, such as exposed PII (Personally Identifiable Information) in claims data, outdated libraries affecting policy processing, or unsafe practices that could violate insurance regulations. Include file names, snippets, and mitigation advice tailored to Travelers' need for data privacy and regulatory compliance.`;
-            break;
-        case "technicalDebt":
-            analysisQuery = `Analyze the GitHub repository at ${githubUrl} for Travelers Corporation. Travelers wants to migrate this application to AWS Lambda to enhance scalability for real-time claims processing and reduce operational costs. Assess the technical debt and estimate the time and effort (in weeks and developer hours) to refactor the application for AWS Lambda, considering Travelers' requirements for high availability, integration with insurance APIs, and compliance with industry standards.`;
-            break;
-        default:
-            alert("Invalid category!");
-            loadingSpinner.style.display = "none";
-            analyzeButtons.forEach(button => {
-                button.disabled = false;
-                button.style.opacity = "1";
-            });
-            return;
-    }
-
-    fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            type: "github",
-            githubUrl: githubUrl,
-            analysisQuery: analysisQuery
-        })
-    })
-    .then(response => {
-        console.log("Fetch response received for discover:", response.status);
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        return response.json();
-    })
-    .then(data => {
-        console.log("Fetch data received for discover:", data);
-        let resultText = data.analysis || "No result returned.";
-        document.getElementById("discoverResult").innerHTML = `<pre>${resultText}</pre>`;
-        document.getElementById("downloadDiscoverPdf").style.display = "block";
-    })
-    .catch(error => {
-        console.error("Error fetching analysis for discover:", error);
-        document.getElementById("discoverResult").innerText = "Error fetching analysis: " + error.message;
-    })
-    .finally(() => {
-        console.log("Fetch completed for discover, hiding spinner and re-enabling buttons");
-        loadingSpinner.style.display = "none";
-        analyzeButtons.forEach(button => {
-            button.disabled = false;
-            button.style.opacity = "1";
-        });
-    });
 }
 
 function analyzeDiagram() {
@@ -487,21 +412,6 @@ function downloadPdf(type) {
             else addTextWithIndent(trimmedLine, 0, 10);
         });
         doc.save("Image_Analysis_Result.pdf");
-    } else if (type === "discover") {
-        let resultElement = document.getElementById("discoverResult").querySelector("pre");
-        let resultText = resultElement ? resultElement.innerText : "No result available.";
-        doc.text("Discover Analysis Result", 10, 10);
-        yPosition = 20;
-
-        let lines = resultText.split("\n");
-        lines.forEach(line => {
-            let trimmedLine = line.trim();
-            if (!trimmedLine) { yPosition += lineHeight; return; }
-            if (trimmedLine.match(/^\d+\./)) addTextWithIndent(trimmedLine, 0, 10);
-            else if (trimmedLine.startsWith("-")) addTextWithIndent(trimmedLine, 1, 10);
-            else addTextWithIndent(trimmedLine, 0, 10);
-        });
-        doc.save("Discover_Analysis_Result.pdf");
     } else if (type === "diagram") {
         let resultElement = document.getElementById("diagramResult").querySelector("pre");
         let resultText = resultElement ? resultElement.innerText : "No result available.";
@@ -533,7 +443,6 @@ function showPage(pageId) {
     document.getElementById("appPage").style.display = "none";
     document.getElementById("imageAnalysisPage").style.display = "none";
     document.getElementById("discoveryWizardPage").style.display = "none";
-    document.getElementById("discoverPage").style.display = "none";
     document.getElementById("migratePage").style.display = "none";
     document.getElementById("agentPage").style.display = "none";
 
