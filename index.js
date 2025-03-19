@@ -66,8 +66,8 @@ function analyzeImage() {
     };
 }
 
-function sendAgentMessage(suggestion = null) {
-    console.log("sendAgentMessage called with suggestion:", suggestion);
+function sendAgentMessage(suggestion = null, displayText = null) {
+    console.log("sendAgentMessage called with suggestion:", suggestion, "displayText:", displayText);
     const queryInput = document.getElementById("agentQuery");
     const query = suggestion || queryInput.value.trim();
     const loadingSpinner = document.getElementById("agentLoading");
@@ -78,8 +78,9 @@ function sendAgentMessage(suggestion = null) {
         return;
     }
 
-    // Add user message to chat history and display it
-    agentChatHistory.push({ role: "user", content: query });
+    // Use displayText for suggestions, otherwise use the raw query
+    const chatDisplayText = displayText || query;
+    agentChatHistory.push({ role: "user", content: chatDisplayText });
     displayAgentMessages();
 
     // Clear input and suggestions, show typing indicator
@@ -94,7 +95,7 @@ function sendAgentMessage(suggestion = null) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             type: "agent",
-            query: query
+            query: query // Send the full prompt to the backend
         })
     })
     .then(response => {
@@ -141,23 +142,23 @@ function updateSuggestions(query, response) {
 
     // Simple logic to determine dynamic suggestions
     if (query.toLowerCase().includes("hi") || query.toLowerCase().includes("hello")) {
-        addSuggestion("Analyze a GitHub repository", "Can you analyze a GitHub repository for me?");
-        addSuggestion("Tell me about AWS Lambda", "What is AWS Lambda and how does it work?");
+        addSuggestion("Analyze a GitHub repository", "Can you analyze a GitHub repository for me?", "Analyzing repository");
+        addSuggestion("Tell me about AWS Lambda", "What is AWS Lambda and how does it work?", "Analyzing AWS Lambda");
     } else if (query.toLowerCase().includes("analyze") && query.includes("github.com")) {
         lastRepoAnalyzed = query.match(/github\.com\/[^\s]+/)?.[0];
-        addSuggestion("Cost Estimation", `What is the exact cost estimation for ${lastRepoAnalyzed}?`);
-        addSuggestion("Code Quality", `How is the code quality of ${lastRepoAnalyzed}?`);
-        addSuggestion("Security Analysis", `Are there any security issues in ${lastRepoAnalyzed}?`);
+        addSuggestion("Cost Estimation", `What is the exact cost estimation for ${lastRepoAnalyzed}?`, "Analyzing cost estimation");
+        addSuggestion("Code Quality", `How is the code quality of ${lastRepoAnalyzed}?`, "Analyzing code quality");
+        addSuggestion("Security Analysis", `Are there any security issues in ${lastRepoAnalyzed}?`, "Analyzing security");
     } else if (response.toLowerCase().includes("cost")) {
-        addSuggestion("More Details", "Can you provide more details on the cost breakdown?");
-        addSuggestion("Effort Estimation", "How much effort would it take to implement this?");
+        addSuggestion("More Details", "Can you provide more details on the cost breakdown?", "Requesting more cost details");
+        addSuggestion("Effort Estimation", "How much effort would it take to implement this?", "Analyzing effort estimation");
     }
 
-    function addSuggestion(label, query) {
+    function addSuggestion(label, query, displayText) {
         const button = document.createElement("button");
         button.className = "suggestion-btn";
         button.innerText = label;
-        button.onclick = () => sendAgentMessage(query);
+        button.onclick = () => sendAgentMessage(query, displayText); // Pass displayText to sendAgentMessage
         suggestionsContainer.appendChild(button);
     }
 }
