@@ -2,70 +2,6 @@
 let agentChatHistory = [];
 let lastRepoAnalyzed = null;
 
-function analyzeImage() {
-    console.log("analyzeImage clicked");
-    let imageUpload = document.getElementById("imageUpload").files[0];
-    let imageAnalysisQuery = document.getElementById("imageAnalysisQuery").value;
-    let loadingSpinner = document.getElementById("imageLoading");
-
-    if (!imageUpload) {
-        alert("Please upload an image!");
-        return;
-    }
-
-    if (!imageAnalysisQuery) {
-        alert("Please enter an analysis prompt!");
-        return;
-    }
-
-    loadingSpinner.style.display = "block";
-    document.getElementById("imageAnalysisResult").innerHTML = "";
-
-    let reader = new FileReader();
-    reader.readAsDataURL(imageUpload);
-    
-    reader.onload = function () {
-        let base64String = reader.result.split(",")[1];
-        let filename = imageUpload.name;
-
-        fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", { 
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-                type: "imageUpload",
-                filename: filename,
-                image: base64String,
-                analysisQuery: imageAnalysisQuery  
-            }) 
-        })
-        .then(response => {
-            console.log("Fetch response received:", response.status);
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-            return response.json();
-        })
-        .then(data => {
-            console.log("Fetch data received:", data);
-            let resultText = data.imageAnalysis || "No analysis result returned.";
-            document.getElementById("imageAnalysisResult").innerHTML = `<pre>${resultText}</pre>`;
-            document.getElementById("downloadImagePdf").style.display = "block";
-        })
-        .catch(error => {
-            console.error("Error fetching image analysis:", error);
-            document.getElementById("imageAnalysisResult").innerText = "Error fetching image analysis: " + error.message;
-        })
-        .finally(() => {
-            console.log("Fetch completed, hiding spinner");
-            loadingSpinner.style.display = "none";
-        });
-    };
-
-    reader.onerror = function (error) {
-        console.error("Error converting image:", error);
-        alert("Failed to process image. Try again.");
-        loadingSpinner.style.display = "none";
-    };
-}
-
 function sendAgentMessage(suggestion = null, displayText = null) {
     console.log("sendAgentMessage called with suggestion:", suggestion, "displayText:", displayText);
     const queryInput = document.getElementById("agentQuery");
@@ -397,22 +333,7 @@ function downloadPdf(type) {
     doc.setFont("Courier");
     doc.setFontSize(10);
 
-    if (type === "image") {
-        let resultElement = document.getElementById("imageAnalysisResult").querySelector("pre");
-        let resultText = resultElement ? resultElement.innerText : "No result available.";
-        doc.text("Image Analysis Result", 10, 10);
-        yPosition = 20;
-
-        let lines = resultText.split("\n");
-        lines.forEach(line => {
-            let trimmedLine = line.trim();
-            if (!trimmedLine) { yPosition += lineHeight; return; }
-            if (trimmedLine.match(/^\d+\./)) addTextWithIndent(trimmedLine, 0, 10);
-            else if (trimmedLine.startsWith("-")) addTextWithIndent(trimmedLine, 1, 10);
-            else addTextWithIndent(trimmedLine, 0, 10);
-        });
-        doc.save("Image_Analysis_Result.pdf");
-    } else if (type === "diagram") {
+    if (type === "diagram") {
         let resultElement = document.getElementById("diagramResult").querySelector("pre");
         let resultText = resultElement ? resultElement.innerText : "No result available.";
         doc.text("Architecture Reflection Result", 10, 10);
@@ -440,11 +361,9 @@ function showPage(pageId) {
     }
     document.getElementById("landingPage").style.display = "none";
     document.getElementById("chaosMeshPage").style.display = "none";
-    document.getElementById("appPage").style.display = "none";
-    document.getElementById("imageAnalysisPage").style.display = "none";
-    document.getElementById("discoveryWizardPage").style.display = "none";
     document.getElementById("migratePage").style.display = "none";
     document.getElementById("agentPage").style.display = "none";
+    document.getElementById("discoveryWizardPage").style.display = "none";
 
     document.getElementById(pageId).style.display = "block";
 }
