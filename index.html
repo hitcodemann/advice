@@ -17,7 +17,6 @@
     <div class="container" id="landingPage">
         <h2>Explore our solutions</h2>
         <button class="primary-btn" onclick="showPage('chaosMeshPage')">Chaos Mesh</button>
-        <button class="primary-btn" onclick="showPage('appPage')">Enter AI Analysis App</button>
         <button class="primary-btn" onclick="showPage('discoveryWizardPage')">Discovery Wizard</button>
     </div>
 
@@ -25,26 +24,6 @@
         <h2>Chaos Mesh Access</h2>
         <a href="http://a5816a7b52bf94d4aadd0ca07238154b-328713437.us-west-2.elb.amazonaws.com:2333/#/dashboard" target="_blank" class="primary-btn">Go to Chaos Mesh Dashboard</a>
         <button class="secondary-btn" onclick="showPage('landingPage')">Back to Landing</button>
-    </div>
-
-    <div class="container" id="appPage" style="display: none;">
-        <h2>AI Analysis Tools</h2>
-        <button class="primary-btn" onclick="showPage('imageAnalysisPage')">Image Upload & Analysis</button>
-        <button class="secondary-btn" onclick="showPage('landingPage')">Back to Landing</button>
-    </div>
-
-    <div class="container" id="imageAnalysisPage" style="display: none;">
-        <h2>Image Upload & Analysis</h2>
-        <label for="imageUpload">Upload Image:</label>
-        <input type="file" id="imageUpload">
-        <label for="imageAnalysisQuery">Enter Analysis Prompt:</label>
-        <input type="text" id="imageAnalysisQuery" placeholder="E.g., Describe the network architecture in this image">
-        <button class="primary-btn" onclick="analyzeImage()">Analyze Image</button>
-        <div id="imageLoading" class="loader" style="display: none;"></div>
-        <h3>Image Analysis Result:</h3>
-        <p id="imageAnalysisResult"></p>
-        <button id="downloadImagePdf" class="secondary-btn" onclick="downloadPdf('image')" style="display: none;">Download PDF</button>
-        <button class="secondary-btn" onclick="showPage('appPage')">Back</button>
     </div>
 
     <div class="container" id="discoveryWizardPage" style="display: none;">
