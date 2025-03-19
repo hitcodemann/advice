@@ -95,7 +95,7 @@ function sendAgentMessage(suggestion = null, displayText = null) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             type: "agent",
-            query: query // Send the Freeform prompt to the backend
+            query: query // Send the full prompt to the backend
         })
     })
     .then(response => {
@@ -143,15 +143,14 @@ function updateSuggestions(query, response) {
     // Simple logic to determine dynamic suggestions
     if (query.toLowerCase().includes("hi") || query.toLowerCase().includes("hello")) {
         addSuggestion("Analyze a GitHub repository", "Can you analyze a GitHub repository for me?", "Analyzing repository");
-        addSuggestion("Tell me about AWS Lambda", "What is AWS Lambda and how does it work?", "Analyzing AWS Lambda");
     } else if (query.toLowerCase().includes("analyze") && query.includes("github.com")) {
         lastRepoAnalyzed = query.match(/github\.com\/[^\s]+/)?.[0];
-        addSuggestion("Cost Estimation", `What is the exact cost estimation for ${lastRepoAnalyzed}?`, "Analyzing cost estimation");
-        addSuggestion("Code Quality", `How is the code quality of ${lastRepoAnalyzed}?`, "Analyzing code quality");
-        addSuggestion("Security Analysis", `Are there any security issues in ${lastRepoAnalyzed}?`, "Analyzing security");
+        addSuggestion("Code Quality", `Analyze the repository at ${lastRepoAnalyzed} and evaluate code quality. Focus on readability, modularity, and standards adherence, providing examples with file names and improvement suggestions.`, "Analyzing code quality");
+        addSuggestion("Vulnerability Analysis", `Analyze the GitHub repository at ${lastRepoAnalyzed} and identify potential security and vulnerability risks, such as exposed secrets, outdated libraries, or unsafe practices. Must adhere to OWASP standards. Include file names and snippets with mitigation advice.`, "Analyzing security");
+        addSuggestion("Technical Debt", `Identify the technical debts in ${lastRepoAnalyzed}, such as shortcuts, outdated dependencies, or poorly structured code that could increase future maintenance costs. Provide specific examples with file names and code snippets, explaining why they represent technical debt.`, "Analyzing technical debt");
+        addSuggestion("Code Refactoring", `Identify areas in ${lastRepoAnalyzed} where automation or refactoring could reduce development costs.`, "Analyzing code refactoring");
     } else if (response.toLowerCase().includes("cost")) {
-        addSuggestion("More Details", "Can you provide more details on the cost breakdown?", "Requesting more cost details");
-        addSuggestion("Effort Estimation", "How much effort would it take to implement this?", "Analyzing effort estimation");
+        addSuggestion("More Details", "Can you tell me what all i can ask you?", "Tell me more!!");
     }
 
     function addSuggestion(label, query, displayText) {
