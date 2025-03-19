@@ -139,18 +139,18 @@ function updateSuggestions(query, response) {
     const suggestionsContainer = document.getElementById("agentSuggestions");
     suggestionsContainer.innerHTML = "";
 
-    // Logic to determine dynamic suggestions
+    // Simple logic to determine dynamic suggestions
     if (query.toLowerCase().includes("hi") || query.toLowerCase().includes("hello")) {
         addSuggestion("Analyze a GitHub repository", "Can you analyze a GitHub repository for me?");
         addSuggestion("Tell me about AWS Lambda", "What is AWS Lambda and how does it work?");
     } else if (query.toLowerCase().includes("analyze") && query.includes("github.com")) {
         lastRepoAnalyzed = query.match(/github\.com\/[^\s]+/)?.[0];
-        // Show all GitHub-related suggestions at once
         addSuggestion("Cost Estimation", `What is the exact cost estimation for ${lastRepoAnalyzed}?`);
         addSuggestion("Code Quality", `How is the code quality of ${lastRepoAnalyzed}?`);
         addSuggestion("Security Analysis", `Are there any security issues in ${lastRepoAnalyzed}?`);
-        addSuggestion("Technical Debt", `What is the technical debt of ${lastRepoAnalyzed}?`);
-        addSuggestion("Migration Effort", `How long will it take to migrate ${lastRepoAnalyzed} to AWS Lambda?`);
+    } else if (response.toLowerCase().includes("cost")) {
+        addSuggestion("More Details", "Can you provide more details on the cost breakdown?");
+        addSuggestion("Effort Estimation", "How much effort would it take to implement this?");
     }
 
     function addSuggestion(label, query) {
