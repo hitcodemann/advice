@@ -14,12 +14,10 @@ function sendAgentMessage(suggestion = null, displayText = null) {
         return;
     }
 
-    // Use displayText for suggestions, otherwise use the raw query
     const chatDisplayText = displayText || query;
     agentChatHistory.push({ role: "user", content: chatDisplayText });
     displayAgentMessages();
 
-    // Clear input and suggestions, show typing indicator
     if (!suggestion) queryInput.value = "";
     clearSuggestions();
     loadingSpinner.style.display = "block";
@@ -31,7 +29,7 @@ function sendAgentMessage(suggestion = null, displayText = null) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             type: "agent",
-            query: query // Send the full prompt to the backend
+            query: query
         })
     })
     .then(response => {
@@ -39,7 +37,6 @@ function sendAgentMessage(suggestion = null, displayText = null) {
         return response.json();
     })
     .then(data => {
-        // Remove typing indicator
         agentChatHistory = agentChatHistory.filter(msg => !msg.isTyping);
         const resultText = data.agentResponse || "No response returned.";
         agentChatHistory.push({ role: "agent", content: resultText });
@@ -49,7 +46,10 @@ function sendAgentMessage(suggestion = null, displayText = null) {
     .catch(error => {
         console.error("Error fetching agent response:", error);
         agentChatHistory = agentChatHistory.filter(msg => !msg.isTyping);
-        agentChatHistory.push({ role: "agent", content: "Error fetching response: " + error.message });
+        agentChatHistory.push({ 
+            role: "agent", 
+            content: `Sorry, I couldn’t process your request due to a timeout or server issue (${error.message}). Please try again or simplify your query.` 
+        });
         displayAgentMessages();
     })
     .finally(() => {
@@ -59,16 +59,13 @@ function sendAgentMessage(suggestion = null, displayText = null) {
 
 function displayAgentMessages() {
     const messagesContainer = document.getElementById("agentMessages");
-    messagesContainer.innerHTML = ""; // Clear existing messages
-
+    messagesContainer.innerHTML = "";
     agentChatHistory.forEach(message => {
         const messageDiv = document.createElement("div");
         messageDiv.className = `chat-message ${message.role} ${message.isTyping ? 'typing' : ''}`;
         messageDiv.innerHTML = `<pre>${message.content}</pre>`;
         messagesContainer.appendChild(messageDiv);
     });
-
-    // Scroll to the bottom of the chat
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
@@ -76,26 +73,57 @@ function updateSuggestions(query, response) {
     const suggestionsContainer = document.getElementById("agentSuggestions");
     suggestionsContainer.innerHTML = "";
 
-    // Simple logic to determine dynamic suggestions
+    // Initial suggestion for greetings
     if (query.toLowerCase().includes("hi") || query.toLowerCase().includes("hello")) {
-        addSuggestion("Analyze a GitHub repository", "Can you analyze a GitHub repository for me?", "Analyzing repository");
-    } else if (query.toLowerCase().includes("analyze") && query.includes("github.com")) {
-        lastRepoAnalyzed = query.match(/github\.com\/[^\s]+/)?.[0];
-        addSuggestion("Cost Estimation", `What is the exact cost estimation for ${lastRepoAnalyzed}?`, "Analyzing cost estimation");
-        addSuggestion("Code Quality", `Analyze the repository at ${lastRepoAnalyzed} and evaluate code quality. Focus on readability, modularity, and standards adherence, providing examples with file names and improvement suggestions.`, "Analyzing code quality");
-        addSuggestion("Security Analysis", `Analyze the GitHub repository at ${lastRepoAnalyzed} and identify potential security and vulnerability risks, such as exposed secrets, outdated libraries, or unsafe practices. Must adhere to OWASP standards. Include file names and snippets with mitigation advice.`, "Analyzing security");
-        addSuggestion("Technical Debt", `Identify the technical debts in ${lastRepoAnalyzed}, such as shortcuts, outdated dependencies, or poorly structured code that could increase future maintenance costs. Provide specific examples with file names and code snippets, explaining why they represent technical debt.`, "Analyzing technical debt");
-        addSuggestion("Code Refactoring", `Identify areas in ${lastRepoAnalyzed} where automation or refactoring could reduce development costs.`, "Analyzing code refactoring");
-    } else if (response.toLowerCase().includes("cost")) {
-        addSuggestion("More Details", "Can you provide more details on the cost breakdown?", "Requesting more cost details");
-        addSuggestion("Effort Estimation", "How much effort would it take to implement this?", "Analyzing effort estimation");
+        addSuggestion(
+            "Analyze a GitHub repository",
+            "Can you analyze a GitHub repository for me?",
+            "Kindly tell me what should I share"
+        );
+    }
+
+    // Set lastRepoAnalyzed for GitHub analysis
+    if (query.toLowerCase().includes("analyze") && query.includes("github.com") && !response.includes("timeout") && !response.includes("Error")) {
+        lastRepoAnalyzed = query.match(/github\.com\/[^\s]+/)?.[0] || lastRepoAnalyzed;
+    }
+
+    // Suggestions after successful GitHub analysis
+    if (lastRepoAnalyzed) {
+        addSuggestion(
+            "Code Quality",
+            `Analyze the repository at ${lastRepoAnalyzed} and evaluate code quality. Focus on readability, modularity, and standards adherence, providing examples with file names and improvement suggestions.`,
+            "Evaluating code quality"
+        );
+        addSuggestion(
+            "Vulnerability Analysis",
+            `Analyze the GitHub repository at ${lastRepoAnalyzed} and identify potential security and vulnerability risks, such as exposed secrets, outdated libraries, or unsafe practices. Must adhere to OWASP standards. Include file names and snippets with mitigation advice.`,
+            "Checking for vulnerabilities"
+        );
+        addSuggestion(
+            "Technical Debt",
+            `Identify the technical debts in ${lastRepoAnalyzed}, such as shortcuts, outdated dependencies, or poorly structured code that could increase future maintenance costs. Provide specific examples with file names and code snippets, explaining why they represent technical debt.`,
+            "Assessing technical debt"
+        );
+        addSuggestion(
+            "Code Refactoring",
+            `Identify areas in ${lastRepoAnalyzed} where automation or refactoring could reduce development costs.`,
+            "Exploring refactoring opportunities"
+        );
+    } 
+    // Suggestion for more repo details if response mentions "repo"
+    else if (response.toLowerCase().includes("repo")) {
+        addSuggestion(
+            "More Details",
+            "Can you provide more details on this repo?",
+            "Requesting more repo details"
+        );
     }
 
     function addSuggestion(label, query, displayText) {
         const button = document.createElement("button");
         button.className = "suggestion-btn";
         button.innerText = label;
-        button.onclick = () => sendAgentMessage(query, displayText); // Pass displayText to sendAgentMessage
+        button.onclick = () => sendAgentMessage(query, displayText);
         suggestionsContainer.appendChild(button);
     }
 }
@@ -137,7 +165,6 @@ function analyzeDiagram() {
     loadingSpinner.style.display = "block";
     document.getElementById("diagramResult").innerHTML = "";
 
-    // If no diagram is uploaded, proceed with "Not provided" for HLD/LLD
     if (!diagramUpload) {
         const combinedQuery = `
             You are a Solution Architect at a reputed insurance company. Your task is to analyze the given GitHub repository and accompanying architecture diagrams (HLD/LLD) to determine whether the application can be migrated to the target cloud platform within the specified budget and timeframe. Additionally, estimate costs based on the provided rate chart.
