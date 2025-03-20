@@ -78,17 +78,17 @@ function updateSuggestions(query, response) {
 
     // Simple logic to determine dynamic suggestions
     if (query.toLowerCase().includes("hi") || query.toLowerCase().includes("hello")) {
-        addSuggestion("Analyze a GitHub repository", "Can you analyze a GitHub repository for me?", "Analyzing repository");
-    } else if (query.toLowerCase().includes("analyze") && query.includes("github.com")) {
+        addSuggestion("Analyze a GitHub repository", "Can you analyze a GitHub repository for me?", "Kindly tell me what information I should provide?");
+    } else if (query.toLowerCase().includes("analyze") || query.includes("github.com")) {
         lastRepoAnalyzed = query.match(/github\.com\/[^\s]+/)?.[0];
-        addSuggestion("Cost Estimation", `What is the exact cost estimation for ${lastRepoAnalyzed}?`, "Analyzing cost estimation");
+        addSuggestion("Enterprise Guidelines", `Can you tell me about our enterprise guidelines?`, "Tell me about our enterprise guidelines");
         addSuggestion("Code Quality", `Analyze the repository at ${lastRepoAnalyzed} and evaluate code quality. Focus on readability, modularity, and standards adherence, providing examples with file names and improvement suggestions.`, "Analyzing code quality");
         addSuggestion("Security Analysis", `Analyze the GitHub repository at ${lastRepoAnalyzed} and identify potential security and vulnerability risks, such as exposed secrets, outdated libraries, or unsafe practices. Must adhere to OWASP standards. Include file names and snippets with mitigation advice.`, "Analyzing security");
         addSuggestion("Technical Debt", `Identify the technical debts in ${lastRepoAnalyzed}, such as shortcuts, outdated dependencies, or poorly structured code that could increase future maintenance costs. Provide specific examples with file names and code snippets, explaining why they represent technical debt.`, "Analyzing technical debt");
         addSuggestion("Code Refactoring", `Identify areas in ${lastRepoAnalyzed} where automation or refactoring could reduce development costs.`, "Analyzing code refactoring");
-    } else if (response.toLowerCase().includes("cost")) {
-        addSuggestion("More Details", "Can you provide more details on the cost breakdown?", "Requesting more cost details");
-        addSuggestion("Effort Estimation", "How much effort would it take to implement this?", "Analyzing effort estimation");
+    } else if (query.toLowerCase().includes("effort")) {
+        addSuggestion("More Details", "Can you provide more details on the github repository?", "More insights on the code repository!!");
+        addSuggestion("JIRA", "Ask me about my scope of changes, any files that I am looking to modify as part of enhancement or is there a new module that requires development.", "Help me estimate my changes!!");
     }
 
     function addSuggestion(label, query, displayText) {
