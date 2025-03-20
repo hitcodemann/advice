@@ -371,6 +371,76 @@ You are an expert Solution Architect specializing in cloud migration and archite
     };
 }
 
+function analyzeChaosMeshDiagram() {
+    console.log("analyzeChaosMeshDiagram clicked");
+    const diagramUpload = document.getElementById("chaosMeshDiagramUpload").files[0];
+    const loadingSpinner = document.getElementById("chaosMeshLoading");
+    const analyzeButton = document.querySelector("#chaosMeshDiagramPage .primary-btn");
+
+    if (!diagramUpload) {
+        alert("Please upload an architectural diagram!");
+        return;
+    }
+
+    console.log("Disabling analyze button and showing spinner");
+    analyzeButton.disabled = true;
+    analyzeButton.style.opacity = "0.5";
+    loadingSpinner.style.display = "block";
+    document.getElementById("chaosMeshResult").innerHTML = "";
+
+    const reader = new FileReader();
+    reader.readAsDataURL(diagramUpload);
+
+    reader.onload = function () {
+        const base64String = reader.result.split(",")[1];
+        const filename = diagramUpload.name;
+
+        const analysisPrompt = `
+You are a Chaos Mesh engineering expert built to support Site Reliability Engineers in testing and enhancing system resilience for live Kubernetes-based projects. Your role is to analyze user-provided architectural diagrams (e.g., LLD images) and recommend Chaos Mesh experiments to tackle specific reliability challenges in production or staging environments. Deliver precise responses to the user’s question, including a Chaos Mesh YAML configuration when relevant, a concise explanation of how the experiment tests or stresses the live system, and practical recommendations to improve fault tolerance based on the diagram’s components (e.g., API Gateway, microservices). Stay focused exclusively on Chaos Mesh engineering, avoid off-topic details, and tailor suggestions to the supplied architecture.
+        `;
+
+        fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                type: "imageUpload",
+                filename: filename,
+                image: base64String,
+                analysisQuery: analysisPrompt
+            })
+        })
+        .then(response => {
+            console.log("Fetch response received for chaos mesh diagram:", response.status);
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            return response.json();
+        })
+        .then(data => {
+            console.log("Fetch data received for chaos mesh diagram:", data);
+            const resultText = data.imageAnalysis || "No analysis result returned.";
+            document.getElementById("chaosMeshResult").innerHTML = `<pre>${resultText}</pre>`;
+            document.getElementById("downloadChaosMeshPdf").style.display = "block";
+        })
+        .catch(error => {
+            console.error("Error fetching chaos mesh diagram analysis:", error);
+            document.getElementById("chaosMeshResult").innerText = "Error fetching analysis: " + error.message;
+        })
+        .finally(() => {
+            console.log("Fetch completed for chaos mesh diagram, hiding spinner and re-enabling button");
+            loadingSpinner.style.display = "none";
+            analyzeButton.disabled = false;
+            analyzeButton.style.opacity = "1";
+        });
+    };
+
+    reader.onerror = function (error) {
+        console.error("Error converting diagram:", error);
+        alert("Failed to process diagram. Try again.");
+        loadingSpinner.style.display = "none";
+        analyzeButton.disabled = false;
+        analyzeButton.style.opacity = "1";
+    };
+}
+
 function downloadPdf(type) {
     let { jsPDF } = window.jspdf;
     let doc = new jsPDF();
@@ -439,6 +509,24 @@ function downloadPdf(type) {
             else addTextWithIndent(trimmedLine, 0, 10);
         });
         doc.save("Architectural_Diagram_Analysis_Result.pdf");
+    } else if (type === "chaosMesh") {
+        let resultElement = document.getElementById("chaosMeshResult").querySelector("pre");
+        let resultText = resultElement ? resultElement.innerText : "No result available.";
+        doc.text("Chaos Mesh Diagram Analysis Result", 10, 10);
+        yPosition = 20;
+
+        let lines = resultText.split("\n");
+        lines.forEach(line => {
+            let trimmedLine = line.trim();
+            if (!trimmedLine) { yPosition += lineHeight; return; }
+            if (line.match(/^\s*\+--/)) addTextWithIndent(line.replace("+--", "+--"), 1, 10);
+            else if (line.match(/^\s*\|.*`--/)) addTextWithIndent(line.replace("|   `--", "| `--"), 2, 10);
+            else if (line.match(/^\s*\|.*\+--/)) addTextWithIndent(line.replace("|   +--", "| +--"), 2, 10);
+            else if (trimmedLine.match(/^\d+\./)) addTextWithIndent(trimmedLine, 0, 10);
+            else if (trimmedLine.startsWith("-")) addTextWithIndent(trimmedLine, 1, 10);
+            else addTextWithIndent(trimmedLine, 0, 10);
+        });
+        doc.save("Chaos_Mesh_Diagram_Analysis_Result.pdf");
     }
 }
 
@@ -453,6 +541,7 @@ function showPage(pageId) {
     document.getElementById("agentPage").style.display = "none";
     document.getElementById("discoveryWizardPage").style.display = "none";
     document.getElementById("analyzeDiagramPage").style.display = "none";
+    document.getElementById("chaosMeshDiagramPage").style.display = "none";
 
     document.getElementById(pageId).style.display = "block";
 }
