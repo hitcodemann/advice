@@ -11,6 +11,7 @@
 <body>
     <header>
         <h1>GenAI Innovation</h1>
+        <img src="umbrella.png" alt="Logo" class="logo">
     </header>
 
     <div class="container" id="landingPage">
@@ -29,8 +30,7 @@
     <div class="container" id="discoveryWizardPage" style="display: none;">
         <h2>Discovery Wizard</h2>
         <button class="primary-btn" onclick="showPage('migratePage')">Validate</button>
-        <button class="primary-btn" onclick="showPage('analyzeDiagramPage')">Analyze Diagram</button>
-        <button class="primary-btn" onclick="showPage('agentPage')">TVA (Your's AI Architect)</button>
+        <button class="primary-btn" onclick="showPage('agentPage')">TVA (Your Travelers's AI Architect)</button>
         <button class="secondary-btn" onclick="showPage('landingPage')">Back to Landing</button>
     </div>
 
@@ -62,20 +62,8 @@
         <button class="secondary-btn" onclick="showPage('discoveryWizardPage')">Back</button>
     </div>
 
-    <div class="container" id="analyzeDiagramPage" style="display: none;">
-        <h2>Analyze Architectural Diagram</h2>
-        <label for="analyzeDiagramUpload">Upload Architectural Diagram (LLD/HLD):</label>
-        <input type="file" id="analyzeDiagramUpload" accept="image/*">
-        <button class="primary-btn" onclick="analyzeUploadedDiagram()">Analyze</button>
-        <div id="analyzeLoading" class="loader" style="display: none;"></div>
-        <h3>Analysis Result:</h3>
-        <p id="analyzeResult"></p>
-        <button id="downloadAnalyzePdf" class="secondary-btn" onclick="downloadPdf('analyze')" style="display: none;">Download PDF</button>
-        <button class="secondary-btn" onclick="showPage('discoveryWizardPage')">Back</button>
-    </div>
-
     <div class="container" id="agentPage" style="display: none;">
-        <h2>TVA (Your AI Architect)</h2>
+        <h2>TVA (Your Travelers's AI Architect)</h2>
         <div id="agentChatContainer">
             <div id="agentMessages" class="chat-messages">
                 <!-- Messages will be dynamically added here -->
