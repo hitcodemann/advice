@@ -70,13 +70,13 @@ input, select {
 }
 
 /* Specific styling for analysis results */
-#imageAnalysisResult, #discoverResult, #diagramResult, #analyzeResult {
+#imageAnalysisResult, #discoverResult, #diagramResult {
     margin-top: 10px;
     text-align: left;
     font-family: monospace;
 }
 
-#imageAnalysisResult pre, #discoverResult pre, #diagramResult pre, #analyzeResult pre {
+#imageAnalysisResult pre, #discoverResult pre, #diagramResult pre {
     margin: 0;
     padding: 10px;
     background-color: #f9f9f9;
