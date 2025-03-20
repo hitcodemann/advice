@@ -1,3 +1,4 @@
+// Agent chat state
 let agentChatHistory = [];
 let lastRepoAnalyzed = null;
 
