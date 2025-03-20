@@ -14,12 +14,10 @@ function sendAgentMessage(suggestion = null, displayText = null) {
         return;
     }
 
-    // Use displayText for suggestions, otherwise use the raw query
     const chatDisplayText = displayText || query;
     agentChatHistory.push({ role: "user", content: chatDisplayText });
     displayAgentMessages();
 
-    // Clear input and suggestions, show typing indicator
     if (!suggestion) queryInput.value = "";
     clearSuggestions();
     loadingSpinner.style.display = "block";
@@ -31,7 +29,7 @@ function sendAgentMessage(suggestion = null, displayText = null) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             type: "agent",
-            query: query // Send the full prompt to the backend
+            query: query
         })
     })
     .then(response => {
@@ -39,7 +37,6 @@ function sendAgentMessage(suggestion = null, displayText = null) {
         return response.json();
     })
     .then(data => {
-        // Remove typing indicator
         agentChatHistory = agentChatHistory.filter(msg => !msg.isTyping);
         const resultText = data.agentResponse || "No response returned.";
         agentChatHistory.push({ role: "agent", content: resultText });
@@ -59,7 +56,7 @@ function sendAgentMessage(suggestion = null, displayText = null) {
 
 function displayAgentMessages() {
     const messagesContainer = document.getElementById("agentMessages");
-    messagesContainer.innerHTML = ""; // Clear existing messages
+    messagesContainer.innerHTML = "";
 
     agentChatHistory.forEach(message => {
         const messageDiv = document.createElement("div");
@@ -68,7 +65,6 @@ function displayAgentMessages() {
         messagesContainer.appendChild(messageDiv);
     });
 
-    // Scroll to the bottom of the chat
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
@@ -76,12 +72,11 @@ function updateSuggestions(query, response) {
     const suggestionsContainer = document.getElementById("agentSuggestions");
     suggestionsContainer.innerHTML = "";
 
-    // Simple logic to determine dynamic suggestions
     if (query.toLowerCase().includes("hi") || query.toLowerCase().includes("hello")) {
         addSuggestion("Analyze a GitHub repository", "Can you analyze a GitHub repository for me?", "Kindly tell me what information I should provide?");
     } else if (query.toLowerCase().includes("analyze") || query.includes("github.com")) {
         lastRepoAnalyzed = query.match(/github\.com\/[^\s]+/)?.[0];
-        addSuggestion("Enterprise Guidelines", `Can you tell me about our enterprise guidelines?`, "Tell me about our enterprise guidelines");
+        addSuggestion("Enterprise Guidelines", `Can you tell me the best practices that should be followed as per our enterprise guidelines?`, "Tell me about our enterprise guidelines");
         addSuggestion("Code Quality", `Analyze the repository at ${lastRepoAnalyzed} and evaluate code quality. Focus on readability, modularity, and standards adherence, providing examples with file names and improvement suggestions.`, "Analyzing code quality");
         addSuggestion("Security Analysis", `Analyze the GitHub repository at ${lastRepoAnalyzed} and identify potential security and vulnerability risks, such as exposed secrets, outdated libraries, or unsafe practices. Must adhere to OWASP standards. Include file names and snippets with mitigation advice.`, "Analyzing security");
         addSuggestion("Technical Debt", `Identify the technical debts in ${lastRepoAnalyzed}, such as shortcuts, outdated dependencies, or poorly structured code that could increase future maintenance costs. Provide specific examples with file names and code snippets, explaining why they represent technical debt.`, "Analyzing technical debt");
@@ -95,7 +90,7 @@ function updateSuggestions(query, response) {
         const button = document.createElement("button");
         button.className = "suggestion-btn";
         button.innerText = label;
-        button.onclick = () => sendAgentMessage(query, displayText); // Pass displayText to sendAgentMessage
+        button.onclick = () => sendAgentMessage(query, displayText);
         suggestionsContainer.appendChild(button);
     }
 }
@@ -137,7 +132,6 @@ function analyzeDiagram() {
     loadingSpinner.style.display = "block";
     document.getElementById("diagramResult").innerHTML = "";
 
-    // If no diagram is uploaded, proceed with "Not provided" for HLD/LLD
     if (!diagramUpload) {
         const combinedQuery = `
             You are a Solution Architect at a reputed insurance company. Your task is to analyze the given GitHub repository and accompanying architecture diagrams (HLD/LLD) to determine whether the application can be migrated to the target cloud platform within the specified budget and timeframe. Additionally, estimate costs based on the provided rate chart.
@@ -417,12 +411,12 @@ You are a Chaos Mesh engineering expert built to support Site Reliability Engine
         .then(data => {
             console.log("Fetch data received for chaos mesh diagram:", data);
             const resultText = data.imageAnalysis || "No analysis result returned.";
-            document.getElementById("chaosMeshResult").innerHTML = `<pre>${resultText}</pre>`;
+            document.getElementById("chaosMeshResult").innerHTML = `<pre>${resultText}</pre>`; // Ensure output is boxed
             document.getElementById("downloadChaosMeshPdf").style.display = "block";
         })
         .catch(error => {
             console.error("Error fetching chaos mesh diagram analysis:", error);
-            document.getElementById("chaosMeshResult").innerText = "Error fetching analysis: " + error.message;
+            document.getElementById("chaosMeshResult").innerHTML = `<pre>Error fetching analysis: ${error.message}</pre>`; // Box error message
         })
         .finally(() => {
             console.log("Fetch completed for chaos mesh diagram, hiding spinner and re-enabling button");
