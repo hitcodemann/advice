@@ -22,7 +22,7 @@
     <div class="container" id="chaosMeshPage" style="display: none;">
         <h2>Chaos Mesh Access</h2>
         <a href="http://a193303efc6cb4f1c92b98792b12a250-1102258571.us-west-2.elb.amazonaws.com:2333/" target="_blank" class="primary-btn">Go to Chaos Mesh Dashboard</a>
-        <a href="http://ae1fde3c5545f4c3f9ac62642efd5bda-387864384.us-west-2.elb.amazonaws.com/" target="_blank" class="primary-btn">Insights</a>
+        <button class="primary-btn" onclick="showPage('chaosMeshDiagramPage')">Analyze Chaos Mesh Diagram</button>
         <button class="secondary-btn" onclick="showPage('landingPage')">Back to Landing</button>
     </div>
 
@@ -90,6 +90,18 @@
             <div id="agentLoading" class="loader" style="display: none;"></div>
         </div>
         <button class="secondary-btn" onclick="showPage('discoveryWizardPage')">Back to Discovery Wizard</button>
+    </div>
+
+    <div class="container" id="chaosMeshDiagramPage" style="display: none;">
+        <h2>Analyze Chaos Mesh Diagram</h2>
+        <label for="chaosMeshDiagramUpload">Upload Architectural Diagram (LLD):</label>
+        <input type="file" id="chaosMeshDiagramUpload" accept="image/*">
+        <button class="primary-btn" onclick="analyzeChaosMeshDiagram()">Analyze</button>
+        <div id="chaosMeshLoading" class="loader" style="display: none;"></div>
+        <h3>Analysis Result:</h3>
+        <p id="chaosMeshResult"></p>
+        <button id="downloadChaosMeshPdf" class="secondary-btn" onclick="downloadPdf('chaosMesh')" style="display: none;">Download PDF</button>
+        <button class="secondary-btn" onclick="showPage('chaosMeshPage')">Back</button>
     </div>
 </body>
 </html>
