@@ -301,6 +301,76 @@ function analyzeDiagram() {
     }
 }
 
+function analyzeUploadedDiagram() {
+    console.log("analyzeUploadedDiagram clicked");
+    const diagramUpload = document.getElementById("analyzeDiagramUpload").files[0];
+    const loadingSpinner = document.getElementById("analyzeLoading");
+    const analyzeButton = document.querySelector("#analyzeDiagramPage .primary-btn");
+
+    if (!diagramUpload) {
+        alert("Please upload an architectural diagram!");
+        return;
+    }
+
+    console.log("Disabling analyze button and showing spinner");
+    analyzeButton.disabled = true;
+    analyzeButton.style.opacity = "0.5";
+    loadingSpinner.style.display = "block";
+    document.getElementById("analyzeResult").innerHTML = "";
+
+    const reader = new FileReader();
+    reader.readAsDataURL(diagramUpload);
+
+    reader.onload = function () {
+        const base64String = reader.result.split(",")[1];
+        const filename = diagramUpload.name;
+
+        const analysisPrompt = `
+You are an expert Solution Architect specializing in cloud migration and architectural analysis. Your primary task is to analyze architectural diagrams (e.g., LLD or HLD images) provided by the user and deliver a concise summary of the architectural flow, identifying key components (e.g., API Gateway, serverless functions, databases) and their interactions. Based on this analysis, provide targeted recommendations to optimize the architecture for cloud deployment, adhering to security best practices (e.g., encryption, least privilege, secure APIs) and ensuring high availability (e.g., redundancy, load balancing, auto-scaling). Focus solely on cloud-relevant improvements, avoid generic or unrelated advice, and tailor suggestions to the specific components and structure in the supplied diagram. Assume a cloud-native serverless architecture (e.g., leveraging AWS Lambda, Azure Functions, or GCP Cloud Functions) unless otherwise specified. Provide clear, actionable steps for migration and enhancement, leveraging your knowledge of modern cloud platforms like AWS, Azure, or GCP. Follow these best practices from prior agent descriptions: deliver precise answers to the user’s query with concise explanations.
+        `;
+
+        fetch("https://zekibdxnrk.execute-api.us-west-2.amazonaws.com/dev/travel-advice", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                type: "imageUpload",
+                filename: filename,
+                image: base64String,
+                analysisQuery: analysisPrompt
+            })
+        })
+        .then(response => {
+            console.log("Fetch response received for analyze diagram:", response.status);
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            return response.json();
+        })
+        .then(data => {
+            console.log("Fetch data received for analyze diagram:", data);
+            const resultText = data.imageAnalysis || "No analysis result returned.";
+            document.getElementById("analyzeResult").innerHTML = `<pre>${resultText}</pre>`;
+            document.getElementById("downloadAnalyzePdf").style.display = "block";
+        })
+        .catch(error => {
+            console.error("Error fetching analyze diagram analysis:", error);
+            document.getElementById("analyzeResult").innerText = "Error fetching analysis: " + error.message;
+        })
+        .finally(() => {
+            console.log("Fetch completed for analyze diagram, hiding spinner and re-enabling button");
+            loadingSpinner.style.display = "none";
+            analyzeButton.disabled = false;
+            analyzeButton.style.opacity = "1";
+        });
+    };
+
+    reader.onerror = function (error) {
+        console.error("Error converting diagram:", error);
+        alert("Failed to process diagram. Try again.");
+        loadingSpinner.style.display = "none";
+        analyzeButton.disabled = false;
+        analyzeButton.style.opacity = "1";
+    };
+}
+
 function downloadPdf(type) {
     let { jsPDF } = window.jspdf;
     let doc = new jsPDF();
@@ -351,6 +421,24 @@ function downloadPdf(type) {
             else addTextWithIndent(trimmedLine, 0, 10);
         });
         doc.save("Architecture_Reflection_Result.pdf");
+    } else if (type === "analyze") {
+        let resultElement = document.getElementById("analyzeResult").querySelector("pre");
+        let resultText = resultElement ? resultElement.innerText : "No result available.";
+        doc.text("Architectural Diagram Analysis Result", 10, 10);
+        yPosition = 20;
+
+        let lines = resultText.split("\n");
+        lines.forEach(line => {
+            let trimmedLine = line.trim();
+            if (!trimmedLine) { yPosition += lineHeight; return; }
+            if (line.match(/^\s*\+--/)) addTextWithIndent(line.replace("+--", "+--"), 1, 10);
+            else if (line.match(/^\s*\|.*`--/)) addTextWithIndent(line.replace("|   `--", "| `--"), 2, 10);
+            else if (line.match(/^\s*\|.*\+--/)) addTextWithIndent(line.replace("|   +--", "| +--"), 2, 10);
+            else if (trimmedLine.match(/^\d+\./)) addTextWithIndent(trimmedLine, 0, 10);
+            else if (trimmedLine.startsWith("-")) addTextWithIndent(trimmedLine, 1, 10);
+            else addTextWithIndent(trimmedLine, 0, 10);
+        });
+        doc.save("Architectural_Diagram_Analysis_Result.pdf");
     }
 }
 
@@ -364,6 +452,7 @@ function showPage(pageId) {
     document.getElementById("migratePage").style.display = "none";
     document.getElementById("agentPage").style.display = "none";
     document.getElementById("discoveryWizardPage").style.display = "none";
+    document.getElementById("analyzeDiagramPage").style.display = "none";
 
     document.getElementById(pageId).style.display = "block";
 }
