@@ -22,7 +22,7 @@
     <div class="container" id="chaosMeshPage" style="display: none;">
         <h2>Chaos Mesh Access</h2>
         <a href="http://a193303efc6cb4f1c92b98792b12a250-1102258571.us-west-2.elb.amazonaws.com:2333/" target="_blank" class="primary-btn">Go to Chaos Mesh Dashboard</a>
-        <button class="primary-btn" onclick="showPage('chaosMeshDiagramPage')">Analyze Chaos Mesh Diagram</button>
+        <button class="primary-btn" onclick="showPage('chaosMeshDiagramPage')">Explore Experiments</button>
         <button class="secondary-btn" onclick="showPage('landingPage')">Back to Landing</button>
     </div>
 
@@ -93,7 +93,7 @@
     </div>
 
     <div class="container" id="chaosMeshDiagramPage" style="display: none;">
-        <h2>Analyze Chaos Mesh Diagram</h2>
+        <h2>Chaos Experiment Recommendation</h2>
         <label for="chaosMeshDiagramUpload">Upload Architectural Diagram (LLD):</label>
         <input type="file" id="chaosMeshDiagramUpload" accept="image/*">
         <button class="primary-btn" onclick="analyzeChaosMeshDiagram()">Analyze</button>
